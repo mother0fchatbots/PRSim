@@ -1,6 +1,8 @@
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
+from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+import torch
 
 # Load environment variables from .env file
 load_dotenv()
@@ -16,6 +18,19 @@ try:
 except KeyError:
     print("Error: GOOGLE_API_KEY environment variable not set.")
     print("Please set your Gemini API key as an environment variable or uncomment and update the script.")
+    exit()
+
+# --- Hugging Face Sentiment Analysis Setup ---
+# Load a pre-trained sentiment analysis model
+# distilbert-base-uncased-finetuned-sst-2-english is a good general binary (positive/negative) sentiment model.
+# For more nuanced sentiment, you might explore other models or combine with LLM analysis.
+print("Loading sentiment analysis model... (This may take a moment the first time)")
+try:
+    sentiment_analyzer = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
+    print("Sentiment analysis model loaded successfully.")
+except Exception as e:
+    print(f"Error loading sentiment analysis model: {e}")
+    print("Please ensure you have an active internet connection and the 'transformers' and 'torch' libraries are installed.")
     exit()
 
 def generate_crisis_scenario(client_industry, crisis_type, severity):
@@ -160,6 +175,75 @@ def generate_social_media_draft(crisis_scenario_text, holding_statement_text):
     except Exception as e:
         return f"An error occurred while generating the social media draft: {e}"
 
+def get_user_edited_text(original_text, prompt_message):
+    """
+    Prompts the user to edit a given text, allowing multiple lines of input.
+    """
+    print(f"\n--- {prompt_message} ---")
+    print("Type your response. Press Enter, then type 'END' on a new line and press Enter again to finish.")
+    print("-" * 30)
+    print(original_text) # Display the original text as a starting point
+    print("-" * 30)
+
+    edited_lines = []
+    while True:
+        line = input()
+        if line.strip().upper() == 'END':
+            break
+        edited_lines.append(line)
+    return "\n".join(edited_lines)
+
+
+def analyze_sentiment(text):
+    """
+    Analyzes the sentiment of a given text using a pre-trained Hugging Face model.
+    The 'distilbert-base-uncased-finetuned-sst-2-english' model typically returns 'POSITIVE' or 'NEGATIVE'.
+    We'll interpret this for crisis communication context.
+
+    Args:
+        text (str): The text to analyze.
+
+    Returns:
+        tuple: A tuple containing (sentiment_summary, explanation).
+    """
+    if not text.strip():
+        return "N/A", "Cannot analyze empty text."
+
+    try:
+        # The model outputs a list of dictionaries, e.g., [{'label': 'POSITIVE', 'score': 0.999}]
+        result = sentiment_analyzer(text)
+        label = result[0]['label']
+        score = result[0]['score']
+
+        sentiment_summary = "Neutral"
+        explanation = "The tone is largely neutral, factual, and avoids strong emotional language."
+
+        if label == 'POSITIVE':
+            if score > 0.8: # High confidence positive
+                sentiment_summary = "Compassionate" if any(kw in text.lower() for kw in ['sincere', 'deepest sympathies', 'understand', 'concerned']) else "Very Positive"
+                explanation = f"The statement appears very positive, potentially conveying empathy or strong reassurance (Confidence: {score:.2f})."
+            else:
+                sentiment_summary = "Slightly Positive"
+                explanation = f"The statement leans positive, potentially reassuring or acknowledging (Confidence: {score:.2f})."
+        elif label == 'NEGATIVE':
+            if score > 0.8: # High confidence negative
+                if any(kw in text.lower() for kw in ['regret', 'apologize', 'mistake', 'sorry', 'concern']):
+                    sentiment_summary = "Apologetic/Concerned"
+                    explanation = f"The statement strongly conveys apology or concern, which can be positive in a crisis (Confidence: {score:.2f})."
+                elif any(kw in text.lower() for kw in ['investigating', 'addressing', 'issue', 'situation', 'unfortunate']):
+                    sentiment_summary = "Acknowledging/Serious"
+                    explanation = f"The statement directly acknowledges a serious issue (Confidence: {score:.2f})."
+                else:
+                    sentiment_summary = "Defensive/Negative"
+                    explanation = f"The statement might be perceived as defensive or overly negative, potentially increasing public concern (Confidence: {score:.2f})."
+            else:
+                sentiment_summary = "Slightly Negative"
+                explanation = f"The statement has a slightly negative undertone, which might be due to factual reporting of the crisis (Confidence: {score:.2f})."
+
+        return sentiment_summary, explanation
+
+    except Exception as e:
+        return "Analysis Error", f"Could not perform sentiment analysis: {e}"
 
 def main():
     """
@@ -190,20 +274,47 @@ def main():
         generate_statements_choice = input("\nDo you want to generate a Holding Statement and Initial Social Media Draft for this scenario? (yes/no): ").strip().lower()
 
         if generate_statements_choice == 'yes':
+            # --- Generate and Analyze Holding Statement ---
             print("\nGenerating Holding Statement, please wait...")
-            holding_statement = generate_holding_statement(scenario)
-            print("\n--- HOLDING STATEMENT DRAFT ---")
-            print(holding_statement)
-            print("---------------------------------")
+            initial_holding_statement = generate_holding_statement(scenario)
+            current_holding_statement = initial_holding_statement
 
+            while True:
+                print("\n--- HOLDING STATEMENT DRAFT ---")
+                print(current_holding_statement)
+                sentiment_summary, explanation = analyze_sentiment(current_holding_statement)
+                print(f"\n--- SENTIMENT ANALYSIS (Holding Statement) ---")
+                print(f"Summary: {sentiment_summary}")
+                print(f"Explanation: {explanation}")
+                print("---------------------------------")
+
+                edit_choice = input("\nDo you want to edit this Holding Statement? (yes/no): ").strip().lower()
+                if edit_choice == 'yes':
+                    current_holding_statement = get_user_edited_text(current_holding_statement, "Edit your Holding Statement")
+                else:
+                    break
+
+            # --- Generate and Analyze Social Media Draft ---
             print("\nGenerating Initial Social Media Draft, please wait...")
-            social_media_post = generate_social_media_draft(scenario, holding_statement)
-            print("\n--- INITIAL SOCIAL MEDIA DRAFT ---")
-            print(social_media_post)
-            print("---------------------------------")
+            initial_social_media_post = generate_social_media_draft(scenario, current_holding_statement)
+            current_social_media_post = initial_social_media_post
+
+            while True:
+                print("\n--- INITIAL SOCIAL MEDIA DRAFT ---")
+                print(current_social_media_post)
+                sentiment_summary, explanation = analyze_sentiment(current_social_media_post)
+                print(f"\n--- SENTIMENT ANALYSIS (Social Media Post) ---")
+                print(f"Summary: {sentiment_summary}")
+                print(f"Explanation: {explanation}")
+                print("---------------------------------")
+
+                edit_choice = input("\nDo you want to edit this Social Media Post? (yes/no): ").strip().lower()
+                if edit_choice == 'yes':
+                    current_social_media_post = get_user_edited_text(current_social_media_post, "Edit your Social Media Post")
+                else:
+                    break
         else:
             print("Skipping statement generation.")
-
 
         another = input("\nDo you want to generate another scenario? (yes/no): ").strip().lower()
         if another != 'yes':
