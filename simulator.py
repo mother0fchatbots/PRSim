@@ -72,6 +72,94 @@ def generate_crisis_scenario(client_industry, crisis_type, severity):
             return "Could not generate content. The response was empty."
     except Exception as e:
         return f"An error occurred while generating the crisis scenario: {e}"
+    
+def generate_holding_statement(crisis_scenario_text):
+    """
+    Generates a professional holding statement based on the crisis scenario.
+
+    Args:
+        crisis_scenario_text (str): The detailed crisis event description from generate_crisis_scenario.
+
+    Returns:
+        str: A draft holding statement.
+    """
+    model = genai.GenerativeModel('gemini-1.5-flash')
+
+    prompt = f"""
+    Given the following PR crisis scenario, draft a concise and professional **Holding Statement**.
+
+    A holding statement is an initial, brief public communication designed to:
+    - Acknowledge the situation.
+    - Show empathy (if applicable).
+    - State that the company is actively investigating/addressing the issue.
+    - Indicate that more information will follow.
+    - Avoid speculation or blame.
+    - Maintain trust and control the narrative in the immediate aftermath.
+
+    Crisis Scenario:
+    {crisis_scenario_text}
+
+    ---
+    **Draft Holding Statement:**
+    """
+
+    try:
+        response = model.generate_content(prompt)
+        if response.parts:
+            return response.text
+        else:
+            return "Could not generate holding statement. The response was empty."
+    except Exception as e:
+        return f"An error occurred while generating the holding statement: {e}"
+
+def generate_social_media_draft(crisis_scenario_text, holding_statement_text):
+    """
+    Generates an initial social media post draft based on the crisis scenario and holding statement.
+    This post should aim to "buy time" and direct users to official channels.
+
+    Args:
+        crisis_scenario_text (str): The detailed crisis event description.
+        holding_statement_text (str): The generated holding statement.
+
+    Returns:
+        str: A draft social media post (e.g., for Twitter/X, Facebook).
+    """
+    model = genai.GenerativeModel('gemini-1.5-flash')
+
+    prompt = f"""
+    Given the following PR crisis scenario and the drafted Holding Statement,
+    create an initial social media post (suitable for platforms like Twitter/X or Facebook)
+    that aims to "buy time" and direct users to official updates.
+
+    The social media post should:
+    - Be very brief and to the point.
+    - Acknowledge the situation without going into excessive detail.
+    - Express concern or empathy (if appropriate).
+    - State that the company is actively investigating/working on it.
+    - Direct users to a specified official channel (e.g., company website, official press release page) for future updates.
+    - Use relevant but neutral hashtags.
+    - Avoid speculation, blame, or promises that cannot yet be confirmed.
+
+    Crisis Scenario:
+    {crisis_scenario_text}
+
+    ---
+    Holding Statement (for context, do not copy verbatim):
+    {holding_statement_text}
+
+    ---
+    **Draft Initial Social Media Post:**
+    """
+
+    try:
+        response = model.generate_content(prompt)
+        if response.parts:
+            return response.text
+        else:
+            return "Could not generate social media draft. The response was empty."
+    except Exception as e:
+        return f"An error occurred while generating the social media draft: {e}"
+
 
 def main():
     """
@@ -98,6 +186,24 @@ def main():
         print("\n--- CRISIS SCENARIO GENERATED ---")
         print(scenario)
         print("---------------------------------")
+
+        generate_statements_choice = input("\nDo you want to generate a Holding Statement and Initial Social Media Draft for this scenario? (yes/no): ").strip().lower()
+
+        if generate_statements_choice == 'yes':
+            print("\nGenerating Holding Statement, please wait...")
+            holding_statement = generate_holding_statement(scenario)
+            print("\n--- HOLDING STATEMENT DRAFT ---")
+            print(holding_statement)
+            print("---------------------------------")
+
+            print("\nGenerating Initial Social Media Draft, please wait...")
+            social_media_post = generate_social_media_draft(scenario, holding_statement)
+            print("\n--- INITIAL SOCIAL MEDIA DRAFT ---")
+            print(social_media_post)
+            print("---------------------------------")
+        else:
+            print("Skipping statement generation.")
+
 
         another = input("\nDo you want to generate another scenario? (yes/no): ").strip().lower()
         if another != 'yes':
