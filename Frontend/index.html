@@ -10,58 +10,40 @@
     <header class="section" id="title-section">
         <h1>Welcome to Your AI-Powered Content Hub</h1>
         <p>Dynamic content generation for engaging narratives.</p>
+        <div class="scenario-selector">
+            <label for="scenario-select">Select a Scenario:</label>
+            <select id="scenario-select">
+                <option value="">Choose a scenario...</option>
+            </select>
+        </div>
     </header>
 
     <main>
         <section class="section" id="initial-facts-section">
             <h2>Initial Facts</h2>
-            <div class="content-placeholder">
-                <p>This section will be populated with a concise overview of the core subject or scenario. Think of it as the 'who, what, when, where' to set the stage.</p>
-                <ul>
-                    <li>Fact 1: Placeholder for a key piece of information.</li>
-                    <li>Fact 2: Another important fact to establish context.</li>
-                    <li>Fact 3: A third detail that helps define the initial situation.</li>
-                </ul>
-                <p>The AI will generate these facts based on your input prompt.</p>
+            <div class="content-placeholder" id="facts-content">
+                <p>Select a scenario from the dropdown above to load content.</p>
             </div>
         </section>
 
         <section class="section" id="key-actors-section">
             <h2>Key Actors</h2>
-            <div class="content-placeholder">
-                <p>Here, the AI will identify and describe the primary individuals, groups, or entities involved. This could include their roles, motivations, or relationships.</p>
-                <ul>
-                    <li>Actor A: Description of their role and significance.</li>
-                    <li>Actor B: Details about their involvement and impact.</li>
-                    <li>Actor C: Other relevant parties or entities.</li>
-                </ul>
-                <p>Expect character profiles or brief summaries here.</p>
+            <div class="content-placeholder" id="actors-content">
+                <p>Select a scenario from the dropdown above to load content.</p>
             </div>
         </section>
 
         <section class="section" id="implications-section">
             <h2>Implications</h2>
-            <div class="content-placeholder">
-                <p>This section will explore the potential consequences, outcomes, or broader significance of the initial facts and actions of key actors. It will delve into both short-term and long-term effects.</p>
-                <ul>
-                    <li>Implication 1: Potential positive or negative outcome.</li>
-                    <li>Implication 2: Broader impact on relevant systems or groups.</li>
-                    <li>Implication 3: Future trends or developments that might arise.</li>
-                </ul>
-                <p>The AI will analyze and project various scenarios.</p>
+            <div class="content-placeholder" id="implications-content">
+                <p>Select a scenario from the dropdown above to load content.</p>
             </div>
         </section>
 
         <section class="section" id="justifications-section">
             <h2>Justifications</h2>
-            <div class="content-placeholder">
-                <p>This final section will provide reasons, rationales, or underlying principles behind certain actions, decisions, or the overall scenario presented. It might offer different perspectives or supporting arguments.</p>
-                <ul>
-                    <li>Justification 1: An argument or reason supporting a particular viewpoint.</li>
-                    <li>Justification 2: A counter-argument or alternative perspective.</li>
-                    <li>Justification 3: Ethical or moral considerations involved.</li>
-                </ul>
-                <p>The AI will synthesize arguments and provide balanced insights.</p>
+            <div class="content-placeholder" id="justifications-content">
+                <p>Select a scenario from the dropdown above to load content.</p>
             </div>
         </section>
     </main>
@@ -69,5 +51,7 @@
     <footer>
         <p>&copy; 2025 mother0fchatbots. All rights reserved.</p>
     </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
