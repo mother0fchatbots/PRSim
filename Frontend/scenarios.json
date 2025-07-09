@@ -17,7 +17,17 @@
         "justifications": {
             "heading": "Severity Impact Justification",
             "content": "<p>This scenario is classified as *medium* severity due to:</p><p>* **Reputational Damage:**  While Ava's brand is significantly damaged,  she retains a substantial following and the potential for rehabilitation. The damage is not yet irreparable.</p><p>* **Financial Loss:**  Immediate financial loss is likely due to paused brand partnerships. However, long-term losses depend on the effectiveness of the crisis response.</p><p>* **Legal Consequences:**  Legal action is unlikely unless Ava is demonstrably defrauding brands through false advertising, which isn't explicitly implied here.</p><p>* **Public Trust:**  Public trust in Ava is significantly eroded, but not completely destroyed.  A well-managed response could still salvage some of her reputation.  The incident serves as a cautionary tale within the influencer industry but hasn't caused widespread panic about influencer authenticity as a whole.</p>"
-        }
+        },
+        "customerName": "Elisabeth Sulima", 
+        "backstory": "You are a customer named 'Elisabeth Sulima'. Your backstory is: 'Elisabeth's company invested in a paid partnership with Ava Sharma, a highly successful influencer, to leverage Ava's carefully curated image of authenticity and relatability for their skincare brand. Now, with the viral exposé revealing Ava's false narrative about her \"humble beginnings,\" Elisabeth is facing a PR crisis and potential financial losses. Her primary concern is how Ava's tarnished image will negatively impact her company's reputation and the effectiveness of their marketing campaign, putting their investment and brand integrity at risk.'",
+        "tone": "slightly frustrated but polite",
+        "goalQuestions": [
+            "What is your immediate plan to address these allegations publicly? When can we expect a statement?",
+            "How are you going to manage the backlash on social media? Do you have a crisis communication team involved?",
+            "What is your long-term strategy to repair your image? Are you considering a more transparent approach moving forward?",
+            "Given the current situation, how do you propose we adjust the terms of our existing agreement to reflect the decreased value of your endorsement, if at all?",
+            "What is the actual truth regarding these claims? We need to understand the full scope to assess our risk."
+        ]
     },
     {
         "id": "2",
@@ -37,6 +47,16 @@
         "justifications": {
             "heading": "Severity Impact Justification",
             "content": "<p>This scenario aligns with a **high** severity level due to the following:</p><p>* **Reputational Damage:** GNN, a major news network, faces severe reputational damage, potentially impacting its credibility, audience trust, and advertiser relationships. Accusations of racism are extremely damaging to a news organization's brand image.</p><p>* **Financial Loss:**  Potential advertiser boycotts, loss of viewership, and legal costs associated with potential lawsuits from Dr. Sharma could lead to significant financial losses.</p><p>* **Legal Consequences:** GNN could face legal action from Dr. Sharma for defamation or other related claims.</p><p>* **Public Trust:** The incident significantly erodes public trust in GNN's journalistic integrity and objectivity, potentially impacting its long-term sustainability.  The widespread nature of the social media coverage ensures this will be a persistent issue.</p>"
-        }
+        },
+        "customerName": "Elisabeth Sulima", 
+        "backstory": "You are a customer named 'Elisabeth Sulima'. Your backstory is: 'Elisabeth's company invested in a paid partnership with Ava Sharma, a highly successful influencer, to leverage Ava's carefully curated image of authenticity and relatability for their skincare brand. Now, with the viral exposé revealing Ava's false narrative about her \"humble beginnings,\" Elisabeth is facing a PR crisis and potential financial losses. Her primary concern is how Ava's tarnished image will negatively impact her company's reputation and the effectiveness of their marketing campaign, putting their investment and brand integrity at risk.'",
+        "tone": "slightly frustrated but polite",
+        "goalQuestions": [
+            "What is your immediate plan to address these allegations publicly? When can we expect a statement?",
+            "How are you going to manage the backlash on social media? Do you have a crisis communication team involved?",
+            "What is your long-term strategy to repair your image? Are you considering a more transparent approach moving forward?",
+            "Given the current situation, how do you propose we adjust the terms of our existing agreement to reflect the decreased value of your endorsement, if at all?",
+            "What is the actual truth regarding these claims? We need to understand the full scope to assess our risk."
+        ]
     }
 ]

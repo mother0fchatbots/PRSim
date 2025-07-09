@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Powered Content Generator Demo</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Crisis Simulation Platform</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <header class="section" id="title-section">
@@ -46,12 +46,31 @@
                 <p>Select a scenario from the dropdown above to load content.</p>
             </div>
         </section>
+
+        <button id="start-chat-btn" class="chat-toggle-btn">Start Chat</button>
+
     </main>
 
     <footer>
         <p>&copy; 2025 mother0fchatbots. All rights reserved.</p>
     </footer>
 
-    <script src="script.js"></script>
+    <div id="chat-container" class="chat-container">
+        <div class="chat-header">
+            <h3>AI Chatbot</h3>
+            <button id="close-chat-btn" class="chat-toggle-btn">X</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="message ai-message">
+                <p>Hello! How can I assist you with this scenario?</p>
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Type your message...">
+            <button id="send-chat-btn">Send</button>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
 </body>
 </html>

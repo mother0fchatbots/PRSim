@@ -235,13 +235,15 @@ class Chatbot:
 if __name__ == "__main__":
     # Define the chatbot's persona and goal
     customer_chatbot = Chatbot(
-        name="Alice",
-        backstory="Alice recently purchased a new smart home device and is having trouble connecting it to her Wi-Fi. She also has a question about its warranty.",
+        name="Elisabeth Sulima",
+        backstory="Beth's company invested in a paid partnership with Ava Sharma, a highly successful influencer, to leverage Ava's carefully curated image of authenticity and relatability for their skincare brand. Now, with the viral exposé revealing Ava's false narrative about her \"humble beginnings,\" Beth is facing a PR crisis and potential financial losses. Her primary concern is how Ava's tarnished image will negatively impact her company's reputation and the effectiveness of their marketing campaign, putting their investment and brand integrity at risk.",
         tone="slightly frustrated but polite",
         goal_questions=[
-            "How do I connect my smart home device to Wi-Fi?",
-            "What is the warranty period for this device?",
-            "Can I get a refund if it doesn't work after troubleshooting?"
+            "What is your immediate plan to address these allegations publicly? When can we expect a statement?",
+            "How are you going to manage the backlash on social media? Do you have a crisis communication team involved?",
+            "What is your long-term strategy to repair your image? Are you considering a more transparent approach moving forward?",
+            "Given the current situation, how do you propose we adjust the terms of our existing agreement to reflect the decreased value of your endorsement, if at all?",
+            "What is the actual truth regarding these claims? We need to understand the full scope to assess our risk."
         ]
     )
 
