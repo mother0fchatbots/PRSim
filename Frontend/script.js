@@ -59,8 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to fill content sections based on selected scenario
     function fillContent(scenarioId) {
         const selectedScenario = allScenarios.find(s => s.id === scenarioId);
-        currentScenarioId = scenarioId; // <--- ADD THIS LINE!
-        console.log("DEBUG: currentScenarioId set by fillContent to:", currentScenarioId); // <--- Make sure this line is also present for debugging
+        currentScenarioId = scenarioId; 
+        console.log("DEBUG: currentScenarioId set by fillContent to:", currentScenarioId); 
 
         if (selectedScenario) {
             // Update headings (optional, but good for clarity if they differ)

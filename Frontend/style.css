@@ -3,14 +3,14 @@ body {
     line-height: 1.6;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: #812938;
+    color: #fcf3ba;
     padding-bottom: 100px;
 }
 
 header {
-    background: #333;
-    color: #fff;
+    background: #4e0e24;
+    color: #fcf3ba;
     padding: 1rem 0;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
@@ -27,7 +27,7 @@ main {
 }
 
 .section {
-    background: #1c024d;
+    background: #4e0e24;
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 8px;
@@ -35,15 +35,16 @@ main {
 }
 
 .section h2 {
-    color: #007bff;
-    border-bottom: 2px solid #eee;
+    color: #fcf3ba;
+    border-bottom: 2px solid #fcf3ba;
     padding-bottom: 10px;
     margin-top: 0;
 }
 
 .content-placeholder {
     font-style: italic;
-    color: #aad3ee;
+    color: #000809;
+    background: #fcf3ba;
 }
 
 ul {
@@ -64,7 +65,7 @@ footer {
     position: fixed; /* Fixed position */
     bottom: 30px;    /* 30px from bottom */
     right: 30px;     /* 30px from right */
-    background-color: #007bff;
+    background-color: #8c5e8c;
     color: white;
     border: none;
     padding: 15px 20px;
@@ -77,7 +78,7 @@ footer {
 }
 
 .chat-toggle-btn:hover {
-    background-color: hsl(211, 64%, 22%);
+    background-color: #333;
 }
 
 /* New: Chat Container Styling */
@@ -102,7 +103,7 @@ footer {
 }
 
 .chat-header {
-    background-color: #041c36;
+    background-color: #333;
     color: white;
     padding: 10px 15px;
     border-top-left-radius: 8px;
@@ -148,16 +149,17 @@ footer {
     margin-bottom: 10px;
     max-width: 80%;
     word-wrap: break-word;
+    color:#000809
 }
 
 .user-message {
-    background-color: #dcf8c6; /* Light green for user messages */
+    background-color: #fdeccf; /* Light green for user messages */
     align-self: flex-end; /* Align to the right */
     margin-left: auto; /* Push to the right */
 }
 
 .ai-message {
-    background-color: #f1f0f0; /* Light gray for AI messages */
+    background-color: #c9f1d7; /* Light gray for AI messages */
     align-self: flex-start; /* Align to the left */
     margin-right: auto; /* Push to the left */
 }
@@ -180,7 +182,7 @@ footer {
 }
 
 .chat-input-area button {
-    background-color: #007bff;
+    background-color: #8c5e8c;
     color: white;
     border: none;
     padding: 10px 15px;
@@ -191,5 +193,5 @@ footer {
 }
 
 .chat-input-area button:hover {
-    background-color: #0056b3;
+    background-color: #333;
 }

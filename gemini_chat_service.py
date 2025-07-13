@@ -167,7 +167,7 @@ class GeminiChatSession:
         ai_customer_message = await self._call_gemini_api(prompt)
 
         # 5. Add AI customer's response to history
-        self.chat_history.append({"role": "Elisabeth Sulima", "text": ai_customer_message})
+        self.chat_history.append({"role": self.name, "text": ai_customer_message})
 
         # 6. Return response and goal status
         return {

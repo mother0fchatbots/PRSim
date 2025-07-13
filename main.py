@@ -115,6 +115,6 @@ async def chat_endpoint(request: ChatRequest):
 
     # The goal tracking logic is now fully handled within gemini_chat_service.py's send_message and _update_goal_status.
     # The 'goals_answered' variable is populated from the response_data.
-    print(f"DEBUG_BACKEND: Goals answered status: {goals_answered}") # This line is fine
+    print(f"DEBUG_BACKEND: Goals answered status: {goals_answered}") 
 
     return ChatResponse(response=customer_response_text)
