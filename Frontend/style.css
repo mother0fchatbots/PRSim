@@ -52,6 +52,13 @@ ul {
     margin-left: 20px;
 }
 
+.main-content {
+    flex-grow: 1; /* Allows main content to take up remaining space */
+    padding: 20px;
+    background-color: #812938; /* White background for main content */
+    overflow-y: auto; /* Enable scrolling for main content if needed */
+}
+
 footer {
     text-align: center;
     padding: 20px;
@@ -61,6 +68,80 @@ footer {
     box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
 }
 
+/*sidebar menu style*/
+/* Basic Layout for App Container */
+.app-container {
+    display: flex; /* Use flexbox to arrange sidebar and main content */
+    min-height: calc(100vh - var(--header-height, 60px) - var(--footer-height, 40px)); /* Adjust for header/footer */
+    width: 100%;
+}
+
+/* Left Sidebar Styling */
+.left-sidebar {
+    width: 250px; /* Fixed width for the sidebar */
+    background-color: #4e0e24;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Subtle shadow */
+    overflow-y: auto; /* Enable scrolling if menu content overflows */
+}
+
+.left-sidebar nav {
+    width: 100%;
+}
+
+.menu-section {
+    margin-bottom: 25px;
+}
+
+.menu-section h3 {
+    color: #86aa62;
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.menu-section ul {
+    list-style: none; /* Remove default list bullets */
+    padding: 0;
+    margin: 0;
+}
+
+.menu-section li {
+    margin-bottom: 10px;
+}
+
+.menu-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #86aa62;
+}
+
+.menu-dropdown {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fcf3ba;
+    font-size: 1em;
+}
+
+.menu-item {
+    display: block;
+    padding: 8px 10px;
+    text-decoration: none;
+    color: #08e49b; /* Blue link color */
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.menu-item:hover {
+    background-color: #e9ecef; /* Light hover background */
+}
+
+
+/*Chatbot window style*/
 .chat-toggle-btn {
     position: fixed; /* Fixed position */
     bottom: 30px;    /* 30px from bottom */
@@ -160,6 +241,13 @@ footer {
 
 .ai-message {
     background-color: #c9f1d7; /* Light gray for AI messages */
+    align-self: flex-start; /* Align to the left */
+    margin-right: auto; /* Push to the left */
+}
+
+.welcome-message {
+    background-color: #7f9687; /* Welcome message */
+    font-style: italic;
     align-self: flex-start; /* Align to the left */
     margin-right: auto; /* Push to the left */
 }

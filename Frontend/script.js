@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const actorsContent = document.getElementById('actors-content');
     const implicationsContent = document.getElementById('implications-content');
     const justificationsContent = document.getElementById('justifications-content');
+    const chatCustomerNameElement = document.getElementById('chat-customer-name');
 
     // New Chat elements
     const startChatBtn = document.getElementById('start-chat-btn');
@@ -12,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatInput = document.getElementById('chat-input');
     const sendChatBtn = document.getElementById('send-chat-btn');
     const chatBody = document.getElementById('chat-body'); // The messages display area
+
 
     let allScenarios = []; // To store all loaded scenarios
     let currentSessionId = null; 
@@ -69,6 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('#implications-section h2').textContent = selectedScenario.implications.heading || "Implications";
             document.querySelector('#justifications-section h2').textContent = selectedScenario.justifications.heading || "Justifications";
 
+            // Update the chat customer name based on the selected scenario
+            chatCustomerNameElement.textContent = selectedScenario.customerName;
+
+
             // Update content using innerHTML to render the HTML strings from JSON
             factsContent.innerHTML = selectedScenario.initialFacts.content;
             actorsContent.innerHTML = selectedScenario.keyActors.content;
@@ -80,6 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
             actorsContent.innerHTML = '<p>Select a scenario from the dropdown above to load content.</p>';
             implicationsContent.innerHTML = '<p>Select a scenario from the dropdown above to load content.</p>';
             justificationsContent.innerHTML = '<p>Select a scenario from the dropdown above to load content.</p>';
+            chatCustomerNameElement.textContent = 'Customer Chat'; // Reset if no scenario
+
 
             // Reset headings to default
             document.querySelector('#initial-facts-section h2').textContent = "Initial Facts";
@@ -95,8 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
         fillContent(event.target.value);
         // Reset session ID when scenario changes, as new chat context is needed
         currentSessionId = null;
+        //chatCustomerNameElement.textContent = null;
         // Optionally clear chat history if scenario changes
-        chatBody.innerHTML = `<div class="message ai-message"><p>Hello!?</p></div>`;
+        chatBody.innerHTML = `<div class="message ai-message"><p>Scenario changed, restarting chat chontent... </p></div>`;
     });
 
     // Load scenarios when the page loads
@@ -181,10 +190,17 @@ document.addEventListener('DOMContentLoaded', () => {
     startChatBtn.addEventListener('click', () => {
         chatContainer.classList.add('open');
         startChatBtn.style.display = 'none';
-        chatBody.innerHTML = `<div class="message ai-message"><p>Hello! How can I assist you with this scenario?</p></div>`;
-        currentSessionId = null; // Reset session on starting a new chat
+
         currentScenarioId = scenarioSelect.value; // <<< ADD THIS LINE to explicitly set the current scenario ID
         console.log("DEBUG: Chat started. currentScenarioId set to:", currentScenarioId); // <<< ADD THIS FOR DEBUGGING
+
+        // Get the selected scenario's customer name for the initial message
+        const selectedScenario = allScenarios.find(s => s.id === currentScenarioId);
+        // Default to 'Customer' if for some reason name isn't found
+        const customerName = selectedScenario ? selectedScenario.customerName : 'Customer';
+
+        chatBody.innerHTML = `<div class="message welcome-message"><p>Chat session started with ${customerName} ...</p></div>`;
+        currentSessionId = null; // Reset session on starting a new chat
     });
 
     closeChatBtn.addEventListener('click', () => {

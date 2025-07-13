@@ -9,16 +9,33 @@
 <body>
     <header class="section" id="title-section">
         <h1>Welcome to AI-Powered Simulator</h1>
-        <p>Dynamic content generation for engaging narratives.</p>
-        <div class="scenario-selector">
-            <label for="scenario-select">Select a Scenario:</label>
-            <select id="scenario-select">
-                <option value="">Choose a scenario...</option>
-            </select>
+        <p>Engaging narratives for your people.</p>
         </div>
     </header>
 
-    <main>
+       <div class="app-container">
+        <aside class="left-sidebar">
+            <nav>
+                <div class="menu-section">
+                    <h3>Simulation</h3>
+                    <ul>
+                        <li>
+                            <label for="scenario-select" class="menu-label">Select Scenario:</label>
+                            <select id="scenario-select" class="menu-dropdown"></select>
+                        </li>
+                        </ul>
+                </div>
+                <div class="menu-section">
+                    <h3>Analysis (Future)</h3>
+                    <ul>
+                        <li><a href="#" class="menu-item">Performance Metrics</a></li>
+                        <li><a href="#" class="menu-item">Feedback Loop</a></li>
+                    </ul>
+                </div>
+                </nav>
+        </aside> 
+
+    <main class="main-content">
         <section class="section" id="initial-facts-section">
             <h2>Initial Facts</h2>
             <div class="content-placeholder" id="facts-content">
@@ -48,16 +65,17 @@
         </section>
 
         <button id="start-chat-btn" class="chat-toggle-btn">Start Chat</button>
-
+    
+        <footer>
+            <p>&copy; 2025 mother0fchatbots. All rights reserved.</p>
+        </footer>
     </main>
 
-    <footer>
-        <p>&copy; 2025 mother0fchatbots. All rights reserved.</p>
-    </footer>
+
 
     <div id="chat-container" class="chat-container">
         <div class="chat-header">
-            <h3>AI Chatbot</h3>
+            <h3 id="chat-customer-name">AI Chatbot</h3>
             <button id="close-chat-btn" class="chat-toggle-btn">X</button>
         </div>
         <div class="chat-body" id="chat-body">
