@@ -7,6 +7,7 @@ import uuid
 import json
 from typing import Dict, List # Import List here
 import asyncio # Import asyncio if not already present
+from fastapi.middleware.cors import CORSMiddleware
 
 # Assuming gemini_chat_service.py is in the same directory
 import gemini_chat_service # The chat logic, including GeminiChatSession
@@ -15,6 +16,15 @@ import gemini_chat_service # The chat logic, including GeminiChatSession
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "Frontend")
 
 app = FastAPI()
+
+#configure CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Mount the static files directory
 app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
@@ -46,6 +56,13 @@ class ChatRequest(BaseModel):
 # Pydantic model for the chat response body
 class ChatResponse(BaseModel):
     response: str
+
+class FeedbackRequest(BaseModel):
+    history: list
+    scenario_id: str
+
+class FeedbackResponse(BaseModel):
+    feedback: str
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
@@ -118,3 +135,29 @@ async def chat_endpoint(request: ChatRequest):
     print(f"DEBUG_BACKEND: Goals answered status: {goals_answered}") 
 
     return ChatResponse(response=customer_response_text)
+
+# Feedback endpoint
+@app.post("/feedback", response_model=FeedbackResponse)
+async def feedback_endpoint(request: FeedbackRequest):
+    scenario_id = request.scenario_id
+    conversation_history = request.history
+
+    # Ensure the scenario is valid
+    if scenario_id not in scenarios_data:
+        raise HTTPException(status_code=400, detail="Invalid scenario selected for feedback.")
+
+    selected_scenario = scenarios_data[scenario_id]
+
+    print(f"DEBUG_BACKEND: Received feedback request for scenario ID: {scenario_id}")
+
+    # The feedback logic will be handled by a new function in gemini_chat_service
+    try:
+        feedback_text = await gemini_chat_service.get_feedback_from_model(
+            history=conversation_history,
+            scenario_details=selected_scenario
+        )
+        print("DEBUG_BACKEND: Successfully received feedback from model.")
+        return FeedbackResponse(feedback=feedback_text)
+    except Exception as e:
+        print(f"ERROR_BACKEND: Failed to get feedback from model: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get feedback from the AI model.")

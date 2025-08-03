@@ -283,3 +283,21 @@ footer {
 .chat-input-area button:hover {
     background-color: #333;
 }
+
+/* Style for the feedback button */
+#get-feedback-btn {
+    padding: 10px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    color: #fff;
+    background-color: #8c5e8c; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+#get-feedback-btn:hover {
+    background-color: #218838;
+}

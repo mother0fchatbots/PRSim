@@ -175,6 +175,53 @@ class GeminiChatSession:
             "goals_answered": self.goals_answered # Return the boolean list
         }
 
+#feedback handler   
+async def get_feedback_from_model(history: list, scenario_details: dict) -> str:
+    print(f"DEBUG_SERVICE: Starting get_feedback_from_model...")
+    if not GOOGLE_API_KEY:
+        return "Unable to provide feedback: Gemini API key is not configured."
+
+    prompt = (
+        f"You are an expert PR and communications consultant tasked with evaluating a user's performance in a simulated PR crisis chat. "
+        f"Your role is to provide constructive feedback based on the following conversation and scenario details. "
+        f"The user's goal was to address all of the customer's concerns, which are listed as 'goal_questions'.\n\n"
+        f"--- Scenario Details ---\n"
+        f"Customer Name: {scenario_details['customerName']}\n"
+        f"Customer Backstory: {scenario_details['backstory']}\n"
+        f"Customer Tone: {scenario_details['tone']}\n"
+        f"Customer's Goals (questions the user needed to address): {scenario_details['goal_questions']}\n\n"
+        f"--- Conversation Transcript ---\n"
+    )
+
+    for message in history:
+        sender_label = "User (Customer Service)" if message['sender'] == 'user' else f"{scenario_details['customerName']} (Customer Bot)"
+        prompt += f"{sender_label}: {message['text']}\n"
+
+    prompt += (
+        f"\n--- Feedback Request ---\n"
+        f"Please provide feedback on the user's performance. Consider the following points:\n"
+        f"1.  **Goal Achievement:** Did the user successfully address all of the customer's goal questions? List which ones were addressed and which were missed.\n"
+        f"2.  **Tone and Empathy:** Was the user's tone appropriate for a PR crisis? Did they sound empathetic and professional?\n"
+        f"3.  **Strategy:** Did the user seem to have a clear strategy or did they react impulsively? What was their overall effectiveness?\n"
+        f"4.  **Areas for Improvement:** Provide specific, actionable advice on how the user could have handled the conversation better. Suggest better phrasing or strategic approaches.\n"
+        f"Please structure your response clearly with headings for each point."
+    )
+
+    print(f"DEBUG_SERVICE: Generated prompt for feedback:\n{prompt}")
+
+    try:
+        # CORRECT: Use the async_generate_content method here as well
+        response = await gemini_model.async_generate_content(prompt)
+        if hasattr(response, 'text'):
+            return response.text
+        else:
+            print(f"Error: Gemini API response did not contain a text attribute.")
+            return "Failed to get a valid response from the AI model."
+    except Exception as e:
+        print(f"Error calling Gemini API for feedback: {e}")
+        return "An error occurred while communicating with the AI model."
+
+
 # --- This part is for direct testing of the service. It won't be run by FastAPI ---
 if __name__ == "__main__":
     load_dotenv() # Ensure .env is loaded for testing

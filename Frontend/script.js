@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const justificationsContent = document.getElementById('justifications-content');
     const chatCustomerNameElement = document.getElementById('chat-customer-name');
 
-    // New Chat elements
+    // Chat elements
     const startChatBtn = document.getElementById('start-chat-btn');
     const chatContainer = document.getElementById('chat-container');
     const closeChatBtn = document.getElementById('close-chat-btn');
@@ -14,10 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendChatBtn = document.getElementById('send-chat-btn');
     const chatBody = document.getElementById('chat-body'); // The messages display area
 
+    //Feedback elements
+    const getFeedbackBtn = document.getElementById('get-feedback-btn'); 
+
 
     let allScenarios = []; // To store all loaded scenarios
     let currentSessionId = null; 
     let currentScenarioId = null; 
+    let conversationHistory = [];
 
     // Function to load scenarios from JSON
     async function loadScenarios() {
@@ -104,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset session ID when scenario changes, as new chat context is needed
         currentSessionId = null;
         //chatCustomerNameElement.textContent = null;
+        // Update the chat customer name based on the selected scenario
         // Optionally clear chat history if scenario changes
         chatBody.innerHTML = `<div class="message ai-message"><p>Scenario changed, restarting chat chontent... </p></div>`;
     });
@@ -111,15 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load scenarios when the page loads
     loadScenarios();
 
-    // Optionally, load the first scenario by default if available after loading
-    // This is asynchronous, so call it after loadScenarios() is likely complete
-    // You might want a small delay or use a more robust way to trigger this.
-    // For now, let's keep it simple: the "Choose a scenario..." default will be there.
-    // If you want the first scenario to load immediately, you can uncomment and adjust:
-    // scenarioSelect.value = allScenarios.length > 0 ? allScenarios[0].id : '';
-    // fillContent(scenarioSelect.value);
-
-    // --- New Chat Functionality ---
+    // --- Chat Functionality ---
 
     // Function to add a message to the chat body
     function addMessage(text, sender) {
@@ -132,6 +129,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Scroll to the bottom of the chat
         chatBody.scrollTop = chatBody.scrollHeight;
+
+        //conversation history for feedback
+        conversationHistory.push({
+        sender: sender,
+        text: text
+    });
     }
 
     // Handle sending message
@@ -190,9 +193,11 @@ document.addEventListener('DOMContentLoaded', () => {
     startChatBtn.addEventListener('click', () => {
         chatContainer.classList.add('open');
         startChatBtn.style.display = 'none';
+        getFeedbackBtn.style.display = 'none';
+        conversationHistory = []; // Clear the history for a new session
 
         currentScenarioId = scenarioSelect.value; // <<< ADD THIS LINE to explicitly set the current scenario ID
-        console.log("DEBUG: Chat started. currentScenarioId set to:", currentScenarioId); // <<< ADD THIS FOR DEBUGGING
+        console.log("DEBUG: Chat started. currentScenarioId set to:", currentScenarioId); 
 
         // Get the selected scenario's customer name for the initial message
         const selectedScenario = allScenarios.find(s => s.id === currentScenarioId);
@@ -201,11 +206,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         chatBody.innerHTML = `<div class="message welcome-message"><p>Chat session started with ${customerName} ...</p></div>`;
         currentSessionId = null; // Reset session on starting a new chat
+        
     });
 
     closeChatBtn.addEventListener('click', () => {
         chatContainer.classList.remove('open');
         startChatBtn.style.display = 'block';
+        getFeedbackBtn.style.display = 'block';
         currentSessionId = null; // Clear session ID when chat closes
     });
 
@@ -216,4 +223,39 @@ document.addEventListener('DOMContentLoaded', () => {
             sendMessage();
         }
     });
+
+    getFeedbackBtn.addEventListener('click', async () => {
+    if (conversationHistory.length > 0 && currentScenarioId) {
+        console.log("Requesting feedback with conversation history:", conversationHistory);
+
+        try {
+            // Call the new backend endpoint for feedback
+            const response = await fetch('http://127.0.0.1:8000/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    history: conversationHistory,
+                    scenario_id: currentScenarioId
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`HTTP error! Status: ${response.status} - ${errorData.detail || response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log("Feedback received:", data.feedback);
+            // TODO: In a later step, we'll display this feedback to the user.
+            alert(`Feedback Received: \n\n${data.feedback}`); // For now, use a simple alert
+
+        } catch (error) {
+            console.error('Error requesting feedback from backend:', error);
+            alert("Sorry, an error occurred while getting feedback.");
+        }
+
+    } else {
+        alert("No conversation history to get feedback on.");
+    }
+});
 });
