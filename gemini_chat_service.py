@@ -184,12 +184,12 @@ async def get_feedback_from_model(history: list, scenario_details: dict) -> str:
     prompt = (
         f"You are an expert PR and communications consultant tasked with evaluating a user's performance in a simulated PR crisis chat. "
         f"Your role is to provide constructive feedback based on the following conversation and scenario details. "
-        f"The user's goal was to address all of the customer's concerns, which are listed as 'goal_questions'.\n\n"
+        f"The user's goal was to address all of the customer's concerns, which are listed as 'goalQuestions'.\n\n"
         f"--- Scenario Details ---\n"
         f"Customer Name: {scenario_details['customerName']}\n"
         f"Customer Backstory: {scenario_details['backstory']}\n"
         f"Customer Tone: {scenario_details['tone']}\n"
-        f"Customer's Goals (questions the user needed to address): {scenario_details['goal_questions']}\n\n"
+        f"Customer's Goals (questions the user needed to address): {scenario_details['goalQuestions']}\n\n"
         f"--- Conversation Transcript ---\n"
     )
 
@@ -199,21 +199,33 @@ async def get_feedback_from_model(history: list, scenario_details: dict) -> str:
 
     prompt += (
         f"\n--- Feedback Request ---\n"
-        f"Please provide feedback on the user's performance. Consider the following points:\n"
-        f"1.  **Goal Achievement:** Did the user successfully address all of the customer's goal questions? List which ones were addressed and which were missed.\n"
-        f"2.  **Tone and Empathy:** Was the user's tone appropriate for a PR crisis? Did they sound empathetic and professional?\n"
-        f"3.  **Strategy:** Did the user seem to have a clear strategy or did they react impulsively? What was their overall effectiveness?\n"
-        f"4.  **Areas for Improvement:** Provide specific, actionable advice on how the user could have handled the conversation better. Suggest better phrasing or strategic approaches.\n"
-        f"Please structure your response clearly with headings for each point."
+        f"Please provide your feedback using the exact following structure. Each section must be on a new line.\n"
+        f"Start with a summary of the user's overall performance.\n\n"
+        f"**Goal Achievement**\n"
+        f"Did the user successfully address all of the customer's goal questions? List which ones were addressed and which were missed.\n\n"
+        f"**Tone and Empathy**\n"
+        f"Was the user's tone appropriate for a PR crisis? Did they sound empathetic and professional?\n\n"
+        f"**Strategy**\n"
+        f"Did the user seem to have a clear strategy or did they react impulsively? What was their overall effectiveness?\n\n"
+        f"**Areas for Improvement**\n"
+        f"Provide specific, actionable advice on how the user could have handled the conversation better. Suggest better phrasing or strategic approaches.\n"
     )
 
     print(f"DEBUG_SERVICE: Generated prompt for feedback:\n{prompt}")
 
     try:
-        # CORRECT: Use the async_generate_content method here as well
-        response = await gemini_model.async_generate_content(prompt)
+        response = await gemini_model.generate_content_async(prompt)
         if hasattr(response, 'text'):
-            return response.text
+            # This is the key change: Split the text into lines and join with a newline character.
+            # This handles cases where the model provides no line breaks.
+            formatted_feedback = '\n'.join(line.strip() for line in response.text.split('.'))
+
+            # The code below is a better way to format, so I am going to use that instead.
+            # This is to handle any markdown formatting from the AI
+            # We will use this to format the text
+            formatted_feedback = response.text
+            return formatted_feedback
+            
         else:
             print(f"Error: Gemini API response did not contain a text attribute.")
             return "Failed to get a valid response from the AI model."

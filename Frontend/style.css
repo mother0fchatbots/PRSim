@@ -4,13 +4,13 @@ body {
     margin: 0;
     padding: 0;
     background-color: #812938;
-    color: #fcf3ba;
+    color: #1d1c14;
     padding-bottom: 100px;
 }
 
 header {
     background: #4e0e24;
-    color: #fcf3ba;
+    color: #1d1c14;
     padding: 1rem 0;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
@@ -35,8 +35,8 @@ main {
 }
 
 .section h2 {
-    color: #fcf3ba;
-    border-bottom: 2px solid #fcf3ba;
+    color: #1d1c14;
+    border-bottom: 2px solid #1d1c14;
     padding-bottom: 10px;
     margin-top: 0;
 }
@@ -44,7 +44,7 @@ main {
 .content-placeholder {
     font-style: italic;
     color: #000809;
-    background: #fcf3ba;
+    background: #1d1c14;
 }
 
 ul {
@@ -123,7 +123,7 @@ footer {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: #fcf3ba;
+    background-color: #1d1c14;
     font-size: 1em;
 }
 
@@ -300,4 +300,179 @@ footer {
 
 #get-feedback-btn:hover {
     background-color: #218838;
+}
+
+/* --- New Styles for Refactored Layout --- */
+.main-content {
+    padding: 20px;
+    background-color: #f0f2f5;
+    flex-grow: 1; /* Allows the main content to fill available space */
+    position: relative; /* For proper positioning of children */
+}
+
+/* Styles for the main welcome view */
+#main-view {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.welcome-heading {
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.welcome-text {
+    font-size: 1.2em;
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Styles for the dedicated scenario page */
+#scenario-page {
+    /* Initially hidden via JavaScript, will be displayed with 'flex' */
+    display: none;
+    flex-direction: column;
+    padding: 20px;
+}
+
+/* Header for the scenario page */
+.scenario-page-header {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+/* Scenario Details section with toggle button */
+.scenario-details-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.toggle-btn {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.toggle-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Task list section */
+.task-list {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.task-list h2 {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.task-item:last-child {
+    border-bottom: none;
+}
+
+.task-action-btn {
+    padding: 8px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.task-action-btn:hover {
+    background-color: #218838;
+}
+
+/* Chat and Feedback container styles (add back if they were removed in previous steps) */
+.chat-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 800px;
+    height: 90vh;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+}
+
+.feedback-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 800px;
+    height: 80vh;
+    max-height: 900px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto; /* Enable vertical scrolling when content overflows */
+    word-wrap: break-word; /* Essential for text wrapping */
+    font-size: 1em;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Ensure the sidebar's position and size are independent */
+body {
+    display: flex;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f0f2f5;
+}
+.sidebar {
+    width: 280px;
+    background-color: #34495e;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }

@@ -3,92 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crisis Simulation Platform</title>
+    <title>The Narrative</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
-    <header class="section" id="title-section">
-        <h1>Welcome to AI-Powered Simulator</h1>
-        <p>Engaging narratives for your people.</p>
-        </div>
-    </header>
 
-       <div class="app-container">
-        <aside class="left-sidebar">
-            <nav>
-                <div class="menu-section">
-                    <h3>Simulation</h3>
-                    <ul>
-                        <li>
-                            <label for="scenario-select" class="menu-label">Select Scenario:</label>
-                            <select id="scenario-select" class="menu-dropdown"></select>
-                        </li>
-                        </ul>
-                </div>
-                <div class="menu-section">
-                    <h3>Analysis (Future)</h3>
-                    <ul>
-                        <li><a href="#" class="menu-item">Performance Metrics</a></li>
-                        <li><a href="#" class="menu-item">Feedback Loop</a></li>
-                    </ul>
-                </div>
-                </nav>
-        </aside> 
+<body>
+     <nav class="sidebar">
+        <h1 class="app-title">PR Crisis Simulator</h1>
+        <div class="scenario-selector">
+            <h3>Choose a Scenario:</h3>
+            <select id="scenario-select" class="select-dropdown">
+                <option value="" disabled selected>Select a scenario</option>
+            </select>
+        </div>
+    </nav>
 
     <main class="main-content">
-        <section class="section" id="initial-facts-section">
-            <h2>Initial Facts</h2>
-            <div class="content-placeholder" id="facts-content">
-                <p>Select a scenario from the dropdown above to load content.</p>
-            </div>
-        </section>
+        <div id="main-view">
+            <h1 class="welcome-heading">AI-powered, engaging narratives for your people</h1>
+            <p class="welcome-text">
+                Use the menu on the left to select a scenario and begin your simulation.<br>
+                Have a brand more resilient than your wifi signal.
+            </p>
+        </div>
 
-        <section class="section" id="key-actors-section">
-            <h2>Key Actors</h2>
-            <div class="content-placeholder" id="actors-content">
-                <p>Select a scenario from the dropdown above to load content.</p>
-            </div>
-        </section>
+        <div id="scenario-page" style="display: none;">
+            <header class="scenario-page-header">
+                <h1 id="scenario-title">Scenario Title</h1>
+            </header>
 
-        <section class="section" id="implications-section">
-            <h2>Implications</h2>
-            <div class="content-placeholder" id="implications-content">
-                <p>Select a scenario from the dropdown above to load content.</p>
+            <div class="scenario-details-container">
+                <div class="details-header">
+                    <h2>Scenario Details</h2>
+                    <button id="toggle-details-btn" class="toggle-btn">Hide Details</button>
+                </div>
+                <div id="scenario-details-content" class="details-content">
+                    <div id="facts-content"></div>
+                    <div id="actors-content"></div>
+                    <div id="implications-content"></div>
+                    <div id="justifications-content"></div>
+                </div>
             </div>
-        </section>
-
-        <section class="section" id="justifications-section">
-            <h2>Justifications</h2>
-            <div class="content-placeholder" id="justifications-content">
-                <p>Select a scenario from the dropdown above to load content.</p>
+            
+            <div class="task-list">
+                <h2>Tasks</h2>
+                <ol id="task-list-items">
+                    <li id="task-chat" class="task-item">
+                        <span>1. Simulate Chat with Customer</span>
+                        <button id="start-chat-btn" class="task-action-btn">Start Chat</button>
+                        <button id="get-feedback-btn" class="task-action-btn" style="display: none;">Get Feedback</button>
+                    </li>
+                    </ol>
             </div>
-        </section>
 
-        <button id="start-chat-btn" class="chat-toggle-btn">Start Chat</button>
-        <button id="get-feedback-btn" style="display: none;">Get Feedback</button>
-    
-        <footer>
-            <p>&copy; 2025 mother0fchatbots. All rights reserved.</p>
-        </footer>
+            <div id="chat-container" class="chat-container" style="display: none;">
+                <div class="chat-header">
+                    <h3 id="chat-customer-name">Customer Name</h3>
+                    <button id="close-chat-btn" class="close-btn">&times;</button>
+                </div>
+                <div id="chat-body" class="chat-body">
+                    </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Type your message...">
+                    <button id="send-chat-btn">Send</button>
+                </div>
+            </div>
+
+            <div id="feedback-container" class="feedback-container" style="display: none;">
+                <div class="feedback-header">
+                    <h2>AI Feedback & Evaluation</h2>
+                    <button id="close-feedback-btn" class="close-btn">&times;</button>
+                </div>
+                <div id="feedback-content" class="feedback-content">
+                    <p>Feedback will appear here...</p>
+                </div>
+            </div>
+        </div>
     </main>
-
-
-
-    <div id="chat-container" class="chat-container">
-        <div class="chat-header">
-            <h3 id="chat-customer-name">AI Chatbot</h3>
-            <button id="close-chat-btn" class="chat-toggle-btn">X</button>
-        </div>
-        <div class="chat-body" id="chat-body">
-            <div class="message ai-message">
-                <p>Hello! How can I assist you with this scenario?</p>
-            </div>
-        </div>
-        <div class="chat-input-area">
-            <input type="text" id="chat-input" placeholder="Type your message...">
-            <button id="send-chat-btn">Send</button>
-        </div>
-    </div>
 
     <script src="/static/script.js"></script>
 </body>

@@ -1,29 +1,117 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- View Containers ---
+    const mainView = document.getElementById('main-view');
+    const scenarioPage = document.getElementById('scenario-page');
+
+    // --- Scenario Selection and Details ---
     const scenarioSelect = document.getElementById('scenario-select');
+    const scenarioTitle = document.getElementById('scenario-title');
     const factsContent = document.getElementById('facts-content');
     const actorsContent = document.getElementById('actors-content');
     const implicationsContent = document.getElementById('implications-content');
     const justificationsContent = document.getElementById('justifications-content');
-    const chatCustomerNameElement = document.getElementById('chat-customer-name');
+    const toggleDetailsBtn = document.getElementById('toggle-details-btn');
+    const scenarioDetailsContent = document.getElementById('scenario-details-content');
 
-    // Chat elements
+    // --- Task List Buttons ---
     const startChatBtn = document.getElementById('start-chat-btn');
+    const getFeedbackBtn = document.getElementById('get-feedback-btn');
+
+    // --- Chat Elements ---
     const chatContainer = document.getElementById('chat-container');
     const closeChatBtn = document.getElementById('close-chat-btn');
     const chatInput = document.getElementById('chat-input');
     const sendChatBtn = document.getElementById('send-chat-btn');
-    const chatBody = document.getElementById('chat-body'); // The messages display area
+    const chatBody = document.getElementById('chat-body');
+    const chatCustomerNameElement = document.getElementById('chat-customer-name');
 
-    //Feedback elements
-    const getFeedbackBtn = document.getElementById('get-feedback-btn'); 
+    // --- Feedback Elements ---
+    const feedbackContainer = document.getElementById('feedback-container');
+    const feedbackContent = document.getElementById('feedback-content');
+    const closeFeedbackBtn = document.getElementById('close-feedback-btn');
 
-
-    let allScenarios = []; // To store all loaded scenarios
-    let currentSessionId = null; 
-    let currentScenarioId = null; 
+    // --- State Variables ---
+    let allScenarios = [];
+    let currentSessionId = null;
+    let currentScenarioId = null;
     let conversationHistory = [];
 
-    // Function to load scenarios from JSON
+    // --- Utility Functions ---
+    function generateSessionId() {
+        return 'session-' + Date.now();
+    }
+
+    // format the raw AI feedback text
+    function formatFeedbackText(text) {
+        if (!text) return '';
+
+        // Split the text by the bolded headings. This is the key step.
+        const parts = text.split(/\*\*(.*?)\*\*\s*\n/);
+        let formattedText = '';
+
+        for (let i = 0; i < parts.length; i++) {
+            if (i % 2 === 1) { // This is a heading
+                formattedText += `<h2>${parts[i]}</h2>`;
+            } else { // This is the content below a heading, or the initial text
+                // Replace newlines with <br> for proper line breaks
+                let content = parts[i].replace(/\n/g, '<br>');
+                // Also, replace a period and a space with a period and a line break.
+                // This is a failsafe to handle cases where the model gives no line break.
+                content = content.replace(/\.\s/g, '.<br>');
+                formattedText += `<p>${content}</p>`;
+            }
+        }
+
+        return formattedText;
+    }
+
+// ... rest of your script.js file ...
+
+    function addMessage(message, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', `${sender}-message`);
+        messageDiv.innerHTML = `<p>${message}</p>`;
+        chatBody.appendChild(messageDiv);
+        chatBody.scrollTop = chatBody.scrollHeight; // Auto-scroll to the latest message
+    }
+
+    function resetChat() {
+        chatBody.innerHTML = '';
+        currentSessionId = null;
+        conversationHistory = [];
+    }
+
+    // --- View Management ---
+    function showMainView() {
+        mainView.style.display = 'block';
+        scenarioPage.style.display = 'none';
+        chatContainer.style.display = 'none';
+        feedbackContainer.style.display = 'none';
+        startChatBtn.style.display = 'block';
+        getFeedbackBtn.style.display = 'none';
+    }
+
+    function showScenarioPage() {
+        mainView.style.display = 'none';
+        scenarioPage.style.display = 'flex';
+        chatContainer.style.display = 'none';
+        feedbackContainer.style.display = 'none';
+    }
+
+    function showChat() {
+        chatContainer.style.display = 'flex';
+        scenarioDetailsContent.style.display = 'none';
+        toggleDetailsBtn.textContent = 'Show Details';
+    }
+
+    function hideChat() {
+        chatContainer.style.display = 'none';
+        scenarioDetailsContent.style.display = 'block';
+        toggleDetailsBtn.textContent = 'Hide Details';
+        getFeedbackBtn.style.display = 'block';
+    }
+
+    // --- Main Logic ---
     async function loadScenarios() {
         try {
             const response = await fetch('/static/scenarios.json');
@@ -31,29 +119,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             allScenarios = await response.json();
-            console.log("DEBUG: scenarios.json loaded successfully. Number of scenarios:", allScenarios.length);
             populateDropdown(allScenarios);
-            // Optionally, load the content for the first scenario by default on page load
-            if (allScenarios.length > 0) {
-                scenarioSelect.value = allScenarios[0].id;
-                fillContent(allScenarios[0].id);
-                console.log("DEBUG: Initial scenario selected via loadScenarios:", allScenarios[0].id);
-            } else {
-                console.warn("DEBUG: No scenarios found in scenarios.json, or array is empty.");
-            }
         } catch (error) {
             console.error('Error loading scenarios:', error);
-            factsContent.innerHTML = '<p style="color: red;">Error loading scenarios. Please check the console for details.</p>';
+            // In a real app, display a user-friendly error message
         }
     }
 
-    // Function to populate the dropdown
     function populateDropdown(scenarios) {
-        // Clear existing options (except the default "Choose a scenario...")
-        while (scenarioSelect.options.length > 1) {
-            scenarioSelect.remove(1);
-        }
-
         scenarios.forEach(scenario => {
             const option = document.createElement('option');
             option.value = scenario.id;
@@ -62,118 +135,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Function to fill content sections based on selected scenario
-    function fillContent(scenarioId) {
-        const selectedScenario = allScenarios.find(s => s.id === scenarioId);
-        currentScenarioId = scenarioId; 
-        console.log("DEBUG: currentScenarioId set by fillContent to:", currentScenarioId); 
+    function renderScenarioDetails(scenario) {
+        scenarioTitle.textContent = scenario.title;
+        factsContent.innerHTML = scenario.initialFacts.content;
+        actorsContent.innerHTML = scenario.keyActors.content;
+        implicationsContent.innerHTML = scenario.implications.content;
+        justificationsContent.innerHTML = scenario.justifications.content;
 
-        if (selectedScenario) {
-            // Update headings (optional, but good for clarity if they differ)
-            document.querySelector('#initial-facts-section h2').textContent = selectedScenario.initialFacts.heading || "Initial Facts";
-            document.querySelector('#key-actors-section h2').textContent = selectedScenario.keyActors.heading || "Key Actors";
-            document.querySelector('#implications-section h2').textContent = selectedScenario.implications.heading || "Implications";
-            document.querySelector('#justifications-section h2').textContent = selectedScenario.justifications.heading || "Justifications";
+        // Reset and hide the chat and feedback sections when a new scenario is loaded
+        resetChat();
+        hideChat();
+        feedbackContainer.style.display = 'none';
+        startChatBtn.style.display = 'block';
+        getFeedbackBtn.style.display = 'none';
 
-            // Update the chat customer name based on the selected scenario
-            chatCustomerNameElement.textContent = selectedScenario.customerName;
+        // Update the customer name in the chat header
+        chatCustomerNameElement.textContent = scenario.customerName;
 
-
-            // Update content using innerHTML to render the HTML strings from JSON
-            factsContent.innerHTML = selectedScenario.initialFacts.content;
-            actorsContent.innerHTML = selectedScenario.keyActors.content;
-            implicationsContent.innerHTML = selectedScenario.implications.content;
-            justificationsContent.innerHTML = selectedScenario.justifications.content;
-        } else {
-            // Reset content if no valid scenario is selected (e.g., "Choose a scenario...")
-            factsContent.innerHTML = '<p>Select a scenario from the dropdown above to load content.</p>';
-            actorsContent.innerHTML = '<p>Select a scenario from the dropdown above to load content.</p>';
-            implicationsContent.innerHTML = '<p>Select a scenario from the dropdown above to load content.</p>';
-            justificationsContent.innerHTML = '<p>Select a scenario from the dropdown above to load content.</p>';
-            chatCustomerNameElement.textContent = 'Customer Chat'; // Reset if no scenario
-
-
-            // Reset headings to default
-            document.querySelector('#initial-facts-section h2').textContent = "Initial Facts";
-            document.querySelector('#key-actors-section h2').textContent = "Key Actors";
-            document.querySelector('#implications-section h2').textContent = "Implications";
-            document.querySelector('#justifications-section h2').textContent = "Justifications";
-        }
+        // Show the new scenario page
+        showScenarioPage();
     }
 
-    // Event listener for dropdown change
-    scenarioSelect.addEventListener('change', (event) => {
-        console.log("DEBUG: Scenario dropdown changed. New value:", event.target.value);
-        fillContent(event.target.value);
-        // Reset session ID when scenario changes, as new chat context is needed
-        currentSessionId = null;
-        //chatCustomerNameElement.textContent = null;
-        // Update the chat customer name based on the selected scenario
-        // Optionally clear chat history if scenario changes
-        chatBody.innerHTML = `<div class="message ai-message"><p>Scenario changed, restarting chat chontent... </p></div>`;
-    });
-
-    // Load scenarios when the page loads
-    loadScenarios();
-
-    // --- Chat Functionality ---
-
-    // Function to add a message to the chat body
-    function addMessage(text, sender) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message', `${sender}-message`);
-        const p = document.createElement('p');
-        p.textContent = text;
-        messageDiv.appendChild(p);
-        chatBody.appendChild(messageDiv);
-
-        // Scroll to the bottom of the chat
-        chatBody.scrollTop = chatBody.scrollHeight;
-
-        //conversation history for feedback
-        conversationHistory.push({
-        sender: sender,
-        text: text
-    });
-    }
-
-    // Handle sending message
     async function sendMessage() {
         const userMessage = chatInput.value.trim();
-        if (!userMessage) return; // Don't send empty messages
         if (userMessage) {
             addMessage(userMessage, 'user');
-            chatInput.value = ''; // Clear input immediately
+            conversationHistory.push({ sender: 'user', text: userMessage });
+            chatInput.value = '';
 
+            // If it's a new chat, generate a session ID
             if (!currentSessionId) {
-                currentSessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-                console.log("New chat session ID generated:", currentSessionId);
+                currentSessionId = generateSessionId();
             }
-
-            // --- ADD THESE THREE LINES IMMEDIATELY BELOW THE ABOVE BLOCK ---
-            console.log("DEBUG: Sending userMessage:", userMessage);
-            console.log("DEBUG: Sending currentSessionId:", currentSessionId);
-            console.log("DEBUG: Sending currentScenarioId:", currentScenarioId);
-            // --- END ADDED LINES ---
-
-            if (!currentScenarioId) {
-                addMessage("Please select a scenario from the dropdown before starting the chat.", 'ai');
-                console.error("No scenario selected for chat.");
-                return; // IMPORTANT: This return should prevent the fetch call if scenarioId is missing
-            }
-            // Show a "typing" indicator or disable input temporarily
-            // For now, we'll just wait for the response
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/chat', { // IMPORTANT: Use your FastAPI backend URL
+                const response = await fetch('http://127.0.0.1:8000/chat', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ message: userMessage,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: userMessage,
                         session_id: currentSessionId,
-                        scenario_id: currentScenarioId 
-                     })
+                        scenario_id: currentScenarioId
+                    })
                 });
 
                 if (!response.ok) {
@@ -181,7 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const data = await response.json();
-                addMessage(data.response, 'ai'); // Display AI's response
+                addMessage(data.response, 'ai');
+                conversationHistory.push({ sender: 'ai', text: data.response });
             } catch (error) {
                 console.error('Error sending message to backend:', error);
                 addMessage("I'm sorry, I encountered an error. Please try again.", 'ai');
@@ -189,73 +193,93 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Event listeners for chat buttons
-    startChatBtn.addEventListener('click', () => {
-        chatContainer.classList.add('open');
-        startChatBtn.style.display = 'none';
-        getFeedbackBtn.style.display = 'none';
-        conversationHistory = []; // Clear the history for a new session
+    // --- Event Listeners ---
 
-        currentScenarioId = scenarioSelect.value; // <<< ADD THIS LINE to explicitly set the current scenario ID
-        console.log("DEBUG: Chat started. currentScenarioId set to:", currentScenarioId); 
-
-        // Get the selected scenario's customer name for the initial message
+    // Scenario selection
+    scenarioSelect.addEventListener('change', (event) => {
+        currentScenarioId = event.target.value;
         const selectedScenario = allScenarios.find(s => s.id === currentScenarioId);
-        // Default to 'Customer' if for some reason name isn't found
-        const customerName = selectedScenario ? selectedScenario.customerName : 'Customer';
-
-        chatBody.innerHTML = `<div class="message welcome-message"><p>Chat session started with ${customerName} ...</p></div>`;
-        currentSessionId = null; // Reset session on starting a new chat
-        
+        if (selectedScenario) {
+            renderScenarioDetails(selectedScenario);
+        }
     });
 
+    // Toggle scenario details
+    toggleDetailsBtn.addEventListener('click', () => {
+        if (scenarioDetailsContent.style.display === 'none') {
+            scenarioDetailsContent.style.display = 'block';
+            toggleDetailsBtn.textContent = 'Hide Details';
+        } else {
+            scenarioDetailsContent.style.display = 'none';
+            toggleDetailsBtn.textContent = 'Show Details';
+        }
+    });
+
+    // Start chat button
+    startChatBtn.addEventListener('click', () => {
+        resetChat();
+        showChat();
+        addMessage(`Hello! Welcome to the chat. I am your customer for this simulation.`, 'ai');
+        conversationHistory.push({ sender: 'ai', text: `Hello! Welcome to the chat. I am your customer for this simulation.` });
+        startChatBtn.style.display = 'none';
+    });
+
+    // Close chat button
     closeChatBtn.addEventListener('click', () => {
-        chatContainer.classList.remove('open');
-        startChatBtn.style.display = 'block';
-        getFeedbackBtn.style.display = 'block';
-        currentSessionId = null; // Clear session ID when chat closes
+        hideChat();
     });
 
+    // Send chat button
     sendChatBtn.addEventListener('click', sendMessage);
-
     chatInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
             sendMessage();
         }
     });
 
+    // Get feedback button
     getFeedbackBtn.addEventListener('click', async () => {
-    if (conversationHistory.length > 0 && currentScenarioId) {
-        console.log("Requesting feedback with conversation history:", conversationHistory);
+        if (conversationHistory.length > 0 && currentScenarioId) {
+            feedbackContainer.style.display = 'flex';
+            feedbackContent.innerHTML = '<p>Generating feedback... Please wait.</p>';
 
-        try {
-            // Call the new backend endpoint for feedback
-            const response = await fetch('http://127.0.0.1:8000/feedback', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    history: conversationHistory,
-                    scenario_id: currentScenarioId
-                })
-            });
+            try {
+                const response = await fetch('http://127.0.0.1:8000/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        history: conversationHistory,
+                        scenario_id: currentScenarioId
+                    })
+                });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`HTTP error! Status: ${response.status} - ${errorData.detail || response.statusText}`);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`HTTP error! Status: ${response.status} - ${errorData.detail || response.statusText}`);
+                }
+
+                const data = await response.json();
+                //feedbackContent.innerHTML = data.feedback; 
+                const formattedFeedback = formatFeedbackText(data.feedback);
+                feedbackContent.innerHTML = formattedFeedback
+
+            } catch (error) {
+                console.error('Error requesting feedback from backend:', error);
+                feedbackContent.innerHTML = `<p style="color: red;">Sorry, an error occurred while getting feedback: ${error.message}</p>`;
             }
-
-            const data = await response.json();
-            console.log("Feedback received:", data.feedback);
-            // TODO: In a later step, we'll display this feedback to the user.
-            alert(`Feedback Received: \n\n${data.feedback}`); // For now, use a simple alert
-
-        } catch (error) {
-            console.error('Error requesting feedback from backend:', error);
-            alert("Sorry, an error occurred while getting feedback.");
+        } else {
+            alert("No conversation history to get feedback on.");
         }
+    });
 
-    } else {
-        alert("No conversation history to get feedback on.");
-    }
-});
+    // Close feedback button
+    closeFeedbackBtn.addEventListener('click', () => {
+        feedbackContainer.style.display = 'none';
+        showMainView(); // Go back to the main view after closing feedback
+        scenarioSelect.value = ""; // Reset the dropdown
+    });
+
+    // Initial load
+    loadScenarios();
+    showMainView(); // Start on the welcome page
 });
