@@ -138,9 +138,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderScenarioDetails(scenario) {
         scenarioTitle.textContent = scenario.title;
         factsContent.innerHTML = scenario.initialFacts.content;
-        actorsContent.innerHTML = scenario.keyActors.content;
-        implicationsContent.innerHTML = scenario.implications.content;
-        justificationsContent.innerHTML = scenario.justifications.content;
+        //actorsContent.innerHTML = scenario.keyActors.content;
+        //implicationsContent.innerHTML = scenario.implications.content;
+        //justificationsContent.innerHTML = scenario.justifications.content;
 
         // Reset and hide the chat and feedback sections when a new scenario is loaded
         resetChat();
