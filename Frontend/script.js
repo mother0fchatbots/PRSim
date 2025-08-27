@@ -138,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderScenarioDetails(scenario) {
         scenarioTitle.textContent = scenario.title;
         factsContent.innerHTML = scenario.initialFacts.content;
+        //TODO: For now display just basic facts
         //actorsContent.innerHTML = scenario.keyActors.content;
         //implicationsContent.innerHTML = scenario.implications.content;
         //justificationsContent.innerHTML = scenario.justifications.content;
@@ -169,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/chat', {
+                const response = await fetch('/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -244,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
             feedbackContent.innerHTML = '<p>Generating feedback... Please wait.</p>';
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/feedback', {
+                const response = await fetch('/feedback', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
