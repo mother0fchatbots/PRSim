@@ -72,69 +72,66 @@ async def read_root():
         return FileResponse(index_html_path)
     raise HTTPException(status_code=404, detail="index.html not found.")
 
-@app.post("/chat", response_model=ChatResponse)
-async def chat_endpoint(request: ChatRequest):
-    session_id = request.session_id
-    user_message = request.message
-    scenario_id = request.scenario_id
+# Chat endpoint for ongoing conversations
+@app.post("/chat")
+async def chat(request: ChatRequest):
+    print(f"DEBUG_BACKEND: Received chat request for session ID: {request.session_id}")
 
-    # Initialize variables to prevent UnboundLocalError
-    customer_response_text: str = "An error occurred in the chat."
-    goals_answered: List[bool] = []
+    # Check if the session exists
+    if request.session_id not in chat_sessions:
+        # If no session, it means the user skipped the /start_chat endpoint
+        raise HTTPException(status_code=400, detail="Chat session not found. Please start a new chat.")
 
-    # Validate scenario_id
-    if scenario_id not in scenarios_data:
-        print(f"ERROR_BACKEND: Invalid scenario_id received: {scenario_id}")
-        raise HTTPException(status_code=400, detail="Invalid scenario selected.")
-
-    selected_scenario = scenarios_data[scenario_id]
-
-    current_chat_session: gemini_chat_service.GeminiChatSession # Type hint for clarity
-
-    if session_id not in chat_sessions:
-        try:
-            customer_name = selected_scenario['customerName']
-            customer_backstory = selected_scenario['backstory']
-            customer_tone = selected_scenario['tone']
-            customer_goal_questions = selected_scenario['goalQuestions']
-            print(f"DEBUG_BACKEND: Scenario persona details successfully retrieved from scenarios.json.")
-        except KeyError as e:
-            print(f"ERROR_BACKEND: Missing expected key in scenarios.json for scenario '{scenario_id}': '{e}'. Please check your scenarios.json structure.")
-            raise HTTPException(status_code=500, detail=f"Server configuration error: Incomplete scenario data for ID '{scenario_id}'. Missing key: {e}")
-
-        # Initialize a new chat session for this user, passing individual parameters
-        chat_sessions[session_id] = gemini_chat_service.GeminiChatSession(
-            name=customer_name, # Pass the extracted customerName
-            session_id=session_id,
-            backstory=customer_backstory, # Pass the extracted backstory
-            tone=customer_tone, # Pass the extracted tone
-            goal_questions=customer_goal_questions # Pass the extracted goal_questions
-        )
-        print(f"DEBUG_BACKEND: Creating new chat session for session_id: {session_id} with scenario: {scenario_id}")
-
-        # For the very first message in a new session, send a generic prompt
-        # from the customer service side to initiate the AI customer's response (first goal question).
-        initial_response_data = await chat_sessions[session_id].send_message(
-            customer_service_response="Hello, I am ready to start the chat."
-        )
-        customer_response_text = initial_response_data["ai_response"]
-        goals_answered = initial_response_data["goals_answered"] # Capture the goals_answered list
-        print(f"DEBUG_BACKEND: Initial customer response from AI: {customer_response_text[:200]}...")
-
-    else:
-        current_chat_session = chat_sessions[session_id]
-        print(f"DEBUG_BACKEND: Resuming chat session: {session_id}")
-        # Get the AI's response based on the user's message
-        response_data = await current_chat_session.send_message(customer_service_response=user_message)
+    try:
+        session = chat_sessions[request.session_id]
+        
+        # Send the user's message to the existing chat session
+        response_data = await session.send_message(customer_service_response=request.message)
+        
         customer_response_text = response_data["ai_response"]
-        goals_answered = response_data["goals_answered"] # Capture the goals_answered list
+        goals_answered = response_data["goals_answered"]
+        
         print(f"DEBUG_BACKEND: Received Gemini API response (first 200 chars): {customer_response_text[:200]}...")
+        print(f"DEBUG_BACKEND: Goals answered status: {goals_answered}")
 
-    # The goal tracking logic is now fully handled within gemini_chat_service.py's send_message and _update_goal_status.
-    # The 'goals_answered' variable is populated from the response_data.
-    print(f"DEBUG_BACKEND: Goals answered status: {goals_answered}") 
+        return {"response": customer_response_text}
 
-    return ChatResponse(response=customer_response_text)
+    except Exception as e:
+        print(f"ERROR_BACKEND: Failed to get AI response: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get AI response: {e}")
+
+# Pydantic model for the start chat request
+class StartChatRequest(BaseModel):
+    session_id: str
+    scenario_id: str
+
+@app.post("/start_chat")
+async def start_chat(request: StartChatRequest):
+    print(f"DEBUG_BACKEND: Received start_chat request for session ID: {request.session_id}")
+    try:
+        if request.scenario_id not in scenarios_data:
+            raise HTTPException(status_code=404, detail="Scenario not found.")
+
+        scenario_details = scenarios_data[request.scenario_id]
+
+        # Create a new chat session
+        session = gemini_chat_service.GeminiChatSession(
+            name=scenario_details["customerName"],
+            session_id=request.session_id,
+            backstory=scenario_details["backstory"],
+            tone=scenario_details["tone"],
+            goal_questions=scenario_details["goalQuestions"]
+        )
+        chat_sessions[request.session_id] = session
+
+        # Get the initial response from the AI
+        initial_response_data = await session.start_new_chat_session()
+
+        return {"response": initial_response_data["ai_response"]}
+
+    except Exception as e:
+        print(f"ERROR_BACKEND: Failed to start chat session: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to start chat session: {e}")
 
 # Feedback endpoint
 @app.post("/feedback", response_model=FeedbackResponse)

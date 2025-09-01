@@ -222,12 +222,55 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Start chat button
-    startChatBtn.addEventListener('click', () => {
+    startChatBtn.addEventListener('click', async () => {
         resetChat();
         showChat();
-        addMessage(`Hello! Welcome to the chat. I am your customer for this simulation.`, 'ai');
-        conversationHistory.push({ sender: 'ai', text: `Hello! Welcome to the chat. I am your customer for this simulation.` });
+        chatContainer.classList.add('open');
         startChatBtn.style.display = 'none';
+        getFeedbackBtn.style.display = 'none';
+        conversationHistory = []; // Clear the history for a new session
+        
+        currentScenarioId = scenarioSelect.value;
+        const selectedScenario = allScenarios.find(s => s.id === currentScenarioId);
+
+        if (!selectedScenario) {
+            chatBody.innerHTML = `<div class="message welcome-message"><p>Please select a scenario to begin the chat.</p></div>`;
+            return;
+        }
+
+        // Show a loading message while waiting for the AI
+        chatBody.innerHTML = `<div class="message welcome-message"><p>Connecting to ${selectedScenario.customerName}...</p></div>`;
+
+        currentSessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        console.log("New chat session ID generated:", currentSessionId);
+
+        try {
+            // New fetch call to a dedicated start_chat endpoint
+            const response = await fetch(`${backendUrl}/start_chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    session_id: currentSessionId,
+                    scenario_id: currentScenarioId
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`HTTP error! Status: ${response.status} - ${errorData.detail || response.statusText}`);
+            }
+
+            const data = await response.json();
+            // Clear the loading message and display the AI's first message
+            chatBody.innerHTML = ''; 
+            addMessage(data.response, 'ai');
+
+        } catch (error) {
+            console.error('Error starting chat session:', error);
+            chatBody.innerHTML = `<div class="message ai-message"><p>I'm sorry, I couldn't connect to the customer. Please try again.</p></div>`;
+            startChatBtn.style.display = 'block';
+            getFeedbackBtn.style.display = 'block';
+        }
     });
 
     // Close chat button

@@ -55,6 +55,29 @@ class GeminiChatSession:
         self.asked_questions = set()
         # print(f"Session {self.session_id} initialized. Goals: {self.goal_questions}")
 
+    async def start_new_chat_session(self):
+        """
+        Starts a new chat session by sending a system instruction to the model
+        and retrieving the first message from the AI.
+        """
+        initial_prompt = (
+            f"You are a customer with the following backstory: {self.backstory}. "
+            f"Your tone is {self.tone}. "
+            #f"Your long-term goal is to get information about the following topics: {', '.join(self.goal_questions)}. "
+            "Your goal is to get more information from the PR agent."
+            "Please start the conversation. Just give your first message to the agent."
+        )
+
+        initial_response = await self._call_gemini_api(prompt=initial_prompt)
+
+        self.chat_history.append({"role": self.name, "text": initial_response})
+        
+        # We process the response to get the initial AI message and check goals
+        return {
+            "ai_response": initial_response,
+            "goals_answered": self.goals_answered # Return the boolean list
+        }
+
     async def _call_gemini_api(self, prompt: str) -> str:
         """
         Calls the actual Gemini API to generate a response.
@@ -70,7 +93,7 @@ class GeminiChatSession:
             # Use the actual Gemini API call
             # For multi-turn conversations, you might want to use model.start_chat()
             # and pass history, but for this structured prompt approach, generate_content works.
-            response = gemini_model.generate_content(prompt)
+            response = await gemini_model.generate_content_async(prompt)
             return response.text
         except Exception as e:
             print(f"Error calling Gemini API for session {self.session_id}: {e}")
@@ -90,8 +113,8 @@ class GeminiChatSession:
         prompt = f"You are a customer named '{self.name}'. Your backstory is: '{self.backstory}'.\n"
         prompt += f"Your current goal is to get answers to the following questions: {'; '.join(self.goal_questions)}.\n"
         prompt += f"Maintain a {self.tone} tone throughout the conversation.\n"
-        prompt += "Simulate a conversation with a customer service representative. "
-        prompt += "Your responses should be concise and directly address the conversation flow.\n"
+        prompt += "Simulate a conversation with a public relationship representative regarding the issue provided in a backstory. Do not break character."
+        prompt += "Your responses should be concise and directly address the conversation flow. Use a natural, causal language to make conversation more realistic. \n"
 
         # Add chat history
         if self.chat_history:
