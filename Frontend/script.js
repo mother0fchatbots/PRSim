@@ -30,6 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedbackContent = document.getElementById('feedback-content');
     const closeFeedbackBtn = document.getElementById('close-feedback-btn');
 
+    // Dynamically determine the backend URL based on the environment
+    const backendUrl = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+    ? 'http://127.0.0.1:8000'
+    : '';
+
     // --- State Variables ---
     let allScenarios = [];
     let currentSessionId = null;
@@ -114,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Main Logic ---
     async function loadScenarios() {
         try {
-            const response = await fetch('/static/scenarios.json');
+            const response = await fetch(`${backendUrl}/static/scenarios.json`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -170,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                const response = await fetch('/chat', {
+                const response = await fetch(`${backendUrl}/chat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -245,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
             feedbackContent.innerHTML = '<p>Generating feedback... Please wait.</p>';
 
             try {
-                const response = await fetch('/feedback', {
+                const response = await fetch(`${backendUrl}/feedback`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
