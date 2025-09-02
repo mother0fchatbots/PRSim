@@ -1,1 +1,6 @@
 Hi Elisabeth. Thank you for reaching out! I understand your concerns, but there is nothing you should worry about. Our team is working on the concerns 24/7/ We will keep you informed. 
+
+        <div class="nav-links">
+            <a href="#" id="view-scenarios-link">View Scenarios</a>
+            <a href="#" id="add-scenario-link">Add Scenario</a>
+        </div>

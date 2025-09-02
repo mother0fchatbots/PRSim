@@ -1,6 +1,6 @@
 import time
 import random
-from typing import List, Dict
+from typing import List, Dict, Any
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
@@ -34,7 +34,7 @@ class GeminiChatSession:
     trying to achieve specific goals.
     """
 
-    def __init__(self, name: str, session_id: str, backstory: str, tone: str, goal_questions: List[str]):
+    def __init__(self, session_id: str, chat_actor: Dict[str, Any]):
         """
         Initializes the chat session with its persona and goals.
 
@@ -44,12 +44,12 @@ class GeminiChatSession:
             tone (str): The desired tone of the AI customer (e.g., "polite", "frustrated", "neutral").
             goal_questions (List[str]): A list of questions the AI customer needs to ask/get answers for.
         """
-        self.name = name
         self.session_id = session_id
-        self.backstory = backstory
-        self.tone = tone
-        self.goal_questions = goal_questions
-        self.goals_answered: List[bool] = [False] * len(goal_questions) # Track answered goals
+        self.name = chat_actor["customerName"]
+        self.backstory = chat_actor["backstory"]
+        self.tone = chat_actor["tone"]
+        self.goal_questions = chat_actor["goalQuestions"]
+        self.goals_answered: List[bool] = [False] * len(self.goal_questions)
         self.chat_history: List[Dict[str, str]] = []
         self.current_question_index = 0 # Helps guide which question to ask next if not answered
         self.asked_questions = set()
@@ -203,21 +203,26 @@ async def get_feedback_from_model(history: list, scenario_details: dict) -> str:
     print(f"DEBUG_SERVICE: Starting get_feedback_from_model...")
     if not GOOGLE_API_KEY:
         return "Unable to provide feedback: Gemini API key is not configured."
+    
+    try:
+        customer_details = scenario_details['chatActor']
+    except KeyError:
+        return "Feedback could not be generated. Scenario data is missing the 'chatActor' key."
 
     prompt = (
         f"You are an expert PR and communications consultant tasked with evaluating a user's performance in a simulated PR crisis chat. "
         f"Your role is to provide constructive feedback based on the following conversation and scenario details. "
         f"The user's goal was to address all of the customer's concerns, which are listed as 'goalQuestions'.\n\n"
         f"--- Scenario Details ---\n"
-        f"Customer Name: {scenario_details['customerName']}\n"
-        f"Customer Backstory: {scenario_details['backstory']}\n"
-        f"Customer Tone: {scenario_details['tone']}\n"
-        f"Customer's Goals (questions the user needed to address): {scenario_details['goalQuestions']}\n\n"
+        f"Customer Name: {customer_details['customerName']}\n"
+        f"Customer Backstory: {customer_details['backstory']}\n"
+        f"Customer Tone: {customer_details['tone']}\n"
+        f"Customer's Goals (questions the user needed to address): {customer_details['goalQuestions']}\n\n"
         f"--- Conversation Transcript ---\n"
     )
 
     for message in history:
-        sender_label = "User (Customer Service)" if message['sender'] == 'user' else f"{scenario_details['customerName']} (Customer Bot)"
+        sender_label = "User (Customer Service)" if message['sender'] == 'user' else f"{customer_details['customerName']} (Customer Bot)"
         prompt += f"{sender_label}: {message['text']}\n"
 
     prompt += (

@@ -30,6 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedbackContent = document.getElementById('feedback-content');
     const closeFeedbackBtn = document.getElementById('close-feedback-btn');
 
+    // New element selectors for the "Add Scenario" feature
+    const viewScenariosLink = document.getElementById('view-scenarios-link');
+    const addScenarioLink = document.getElementById('add-scenario-link');
+    const addScenarioFormSection = document.getElementById('add-scenario-form-section');
+    const scenarioForm = document.getElementById('scenario-form');
+
     // Dynamically determine the backend URL based on the environment
     const backendUrl = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
     ? 'http://127.0.0.1:8000'
@@ -69,8 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return formattedText;
     }
-
-// ... rest of your script.js file ...
 
     function addMessage(message, sender) {
         const messageDiv = document.createElement('div');
@@ -142,11 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderScenarioDetails(scenario) {
         scenarioTitle.textContent = scenario.title;
-        factsContent.innerHTML = scenario.initialFacts.content;
-        //TODO: For now display just basic facts
-        //actorsContent.innerHTML = scenario.keyActors.content;
-        //implicationsContent.innerHTML = scenario.implications.content;
-        //justificationsContent.innerHTML = scenario.justifications.content;
+        factsContent.innerHTML = scenario.initialFacts;
 
         // Reset and hide the chat and feedback sections when a new scenario is loaded
         resetChat();
@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
         getFeedbackBtn.style.display = 'none';
 
         // Update the customer name in the chat header
-        chatCustomerNameElement.textContent = scenario.customerName;
+        chatCustomerNameElement.textContent = scenario.chatActor.customerName;
 
         // Show the new scenario page
         showScenarioPage();
@@ -201,6 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Event Listeners ---
 
+    // --- Left-hand menu ---
     // Scenario selection
     scenarioSelect.addEventListener('change', (event) => {
         currentScenarioId = event.target.value;
@@ -209,6 +210,24 @@ document.addEventListener('DOMContentLoaded', () => {
             renderScenarioDetails(selectedScenario);
         }
     });
+
+    // "Add Scenario" menu item
+    addScenarioLink.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevents the link from navigating
+
+        // Hide the main view and show the form
+        mainView.classList.add('hidden');
+        addScenarioFormSection.classList.remove('hidden');
+    });
+
+    // Event listener for the "View Scenarios" menu item (to go back)
+    viewScenariosLink.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevents the link from navigating
+
+        // Show the main view and hide the form
+        mainView.classList.remove('hidden');
+        addScenarioFormSection.classList.add('hidden');
+    });    
 
     // Toggle scenario details
     toggleDetailsBtn.addEventListener('click', () => {
@@ -239,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Show a loading message while waiting for the AI
-        chatBody.innerHTML = `<div class="message welcome-message"><p>Connecting to ${selectedScenario.customerName}...</p></div>`;
+        chatBody.innerHTML = `<div class="message welcome-message"><p>Connecting to ${selectedScenario.chatActor.customerName}...</p></div>`;
 
         currentSessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         console.log("New chat session ID generated:", currentSessionId);

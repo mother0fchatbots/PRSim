@@ -111,16 +111,16 @@ async def start_chat(request: StartChatRequest):
     try:
         if request.scenario_id not in scenarios_data:
             raise HTTPException(status_code=404, detail="Scenario not found.")
-
+        
         scenario_details = scenarios_data[request.scenario_id]
+
+        if "chatActor" not in scenario_details:
+            raise HTTPException(status_code=400, detail="Invalid scenario data. 'chatActor' key is missing.")
 
         # Create a new chat session
         session = gemini_chat_service.GeminiChatSession(
-            name=scenario_details["customerName"],
             session_id=request.session_id,
-            backstory=scenario_details["backstory"],
-            tone=scenario_details["tone"],
-            goal_questions=scenario_details["goalQuestions"]
+            chat_actor=scenario_details["chatActor"]
         )
         chat_sessions[request.session_id] = session
 
@@ -144,6 +144,9 @@ async def feedback_endpoint(request: FeedbackRequest):
         raise HTTPException(status_code=400, detail="Invalid scenario selected for feedback.")
 
     selected_scenario = scenarios_data[scenario_id]
+
+    if 'chatActor' not in selected_scenario:
+        raise HTTPException(status_code=400, detail="Invalid scenario data. 'chatActor' key is missing.")
 
     print(f"DEBUG_BACKEND: Received feedback request for scenario ID: {scenario_id}")
 
