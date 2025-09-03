@@ -105,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scenarioPage.style.display = 'flex';
         chatContainer.style.display = 'none';
         feedbackContainer.style.display = 'none';
+        addScenarioFormSection.style.display = 'none';
     }
 
     function showChat() {
@@ -119,6 +120,13 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleDetailsBtn.textContent = 'Hide Details';
         getFeedbackBtn.style.display = 'block';
     }
+
+    function showAddScenarioForm() {
+        mainView.style.display = 'none';
+        addScenarioFormSection.style.display = 'block';
+        scenarioPage.style.display = 'none';
+    }
+
 
     // --- Main Logic ---
     async function loadScenarios() {
@@ -217,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Hide the main view and show the form
         mainView.classList.add('hidden');
-        addScenarioFormSection.classList.remove('hidden');
+        showAddScenarioForm();
     });
 
     // Event listener for the "View Scenarios" menu item (to go back)
