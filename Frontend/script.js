@@ -347,6 +347,57 @@ document.addEventListener('DOMContentLoaded', () => {
         scenarioSelect.value = ""; // Reset the dropdown
     });
 
+    // Add new scenario form submission
+    scenarioForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Prevent the form from submitting normally
+
+        // Collect data from the form
+        const formData = new FormData(scenarioForm);
+        const newScenario = {
+            id: `scenario-${Date.now()}`,
+            title: formData.get('scenario-title'),
+            initialFacts: {
+                heading: "Initial Facts",
+                content: formData.get('initial-facts-content')
+            },
+            chatActor: {
+                customerName: formData.get('customer-name'),
+                backstory: formData.get('backstory'),
+                tone: formData.get('tone'),
+                goalQuestions: formData.get('goal-questions').split(',').map(item => item.trim())
+            }
+        };
+
+        try {
+            // Send the new scenario data to the backend
+            const response = await fetch(`${backendUrl}/add_scenario`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newScenario)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`HTTP error! Status: ${response.status} - ${errorData.detail || response.statusText}`);
+            }
+
+            const result = await response.json();
+            alert(result.message);
+
+            // Reload the scenarios from the server to get the new one
+            await loadScenarios();
+            
+            // Clear the form and navigate back to the main view
+            scenarioForm.reset();
+            mainView.classList.remove('hidden');
+            addScenarioFormSection.classList.add('hidden');
+
+        } catch (error) {
+            console.error('Error adding new scenario:', error);
+            alert(`Failed to add scenario. Please check the console for details.`);
+        }
+    });    
+
     // Initial load
     loadScenarios();
     showMainView(); // Start on the welcome page

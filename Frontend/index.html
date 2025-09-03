@@ -16,10 +16,10 @@
                 <option value="" disabled selected>Select a scenario</option>
             </select>
         </div>
-        <div class="nav-links">
-            <a href="#" id="view-scenarios-link">View Scenarios</a>
-            <a href="#" id="add-scenario-link">Add Scenario</a>
-        </div>
+        <ul class="nav-links">
+            <li><a href="#" id="view-scenarios-link">View Scenarios</a></li>
+            <li><a href="#" id="add-scenario-link">Add Scenario</a></li>
+        </ul>
     </nav>
 
     <main class="main-content">
@@ -92,6 +92,10 @@
                     <input type="text" id="scenario-title" name="scenario-title" required>
                 </div>
                 <div class="form-group">
+                    <label for="initial-facts-content">Initial Facts</label>
+                    <textarea id="initial-facts-content" name="initial-facts-content" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
                     <label for="customer-name">Customer Name</label>
                     <input type="text" id="customer-name" name="customer-name" required>
                 </div>
@@ -102,22 +106,6 @@
                 <div class="form-group">
                     <label for="tone">Customer Tone</label>
                     <input type="text" id="tone" name="tone" required>
-                </div>
-                <div class="form-group">
-                    <label for="initial-facts-content">Initial Facts</label>
-                    <textarea id="initial-facts-content" name="initial-facts-content" rows="4" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="key-actors-content">Key Actors</label>
-                    <textarea id="key-actors-content" name="key-actors-content" rows="4" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="implications-content">Implications</label>
-                    <textarea id="implications-content" name="implications-content" rows="4" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="justifications-content">Justifications</label>
-                    <textarea id="justifications-content" name="justifications-content" rows="4" required></textarea>
                 </div>
                 <div class="form-group">
                     <label for="goal-questions">Goal Questions (separated by commas)</label>

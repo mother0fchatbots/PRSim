@@ -5,11 +5,10 @@ from pydantic import BaseModel
 import os
 import uuid
 import json
-from typing import Dict, List # Import List here
+from typing import Dict, List, Any 
 import asyncio # Import asyncio if not already present
 from fastapi.middleware.cors import CORSMiddleware
 
-# Assuming gemini_chat_service.py is in the same directory
 import gemini_chat_service # The chat logic, including GeminiChatSession
 
 # Define the path to your frontend directory (adjust "Frontend" if your folder is "frontend")
@@ -32,19 +31,60 @@ app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
 # In-memory store for chat sessions
 chat_sessions: Dict[str, gemini_chat_service.GeminiChatSession] = {}
 
-# Load scenarios from scenarios.json at startup
-scenarios_data = {}
+# In-memory store for scenarios data
+scenarios_data: Dict[str, dict] = {}
 scenarios_file_path = os.path.join(FRONTEND_DIR, "scenarios.json")
-if os.path.exists(scenarios_file_path):
-    with open(scenarios_file_path, 'r', encoding='utf-8') as f:
-        scenarios_list = json.load(f)
-        for s in scenarios_list:
-            scenarios_data[s['id']] = s # Store by string ID
-    print(f"DEBUG_BACKEND: Loaded {len(scenarios_data)} scenarios from {scenarios_file_path}")
-else:
-    print(f"ERROR_BACKEND: scenarios.json not found at {scenarios_file_path}")
-    # Handle this more gracefully in a production app, perhaps by exiting or serving a default
-    scenarios_data = {} # Ensure it's empty if file not found
+
+def reload_scenarios():
+    """Loads scenarios from the JSON file into memory."""
+    global scenarios_data
+    try:
+        with open(scenarios_file_path, 'r', encoding='utf-8') as f:
+            scenarios_list = json.load(f)
+            scenarios_data.clear()  # Clear existing data before reloading
+            for scenario in scenarios_list:
+                scenarios_data[scenario['id']] = scenario
+        print("Scenarios reloaded successfully.")
+    except FileNotFoundError:
+        print(f"ERROR: scenarios.json not found at {scenarios_file_path}")
+    except json.JSONDecodeError:
+        print(f"ERROR: Invalid JSON format in {scenarios_file_path}")
+
+# Load scenarios on startup
+reload_scenarios()
+
+# Pydantic model for the new scenario data
+class NewScenario(BaseModel):
+    id: str
+    title: str
+    initialFacts: Dict[str, str]
+    chatActor: Dict[str, Any]
+    keyActors: Dict[str, str]
+
+# Endpoint to add a new scenario
+@app.post("/add_scenario")
+async def add_scenario(scenario: NewScenario):
+    print("DEBUG_BACKEND: Received request to add a new scenario.")
+    try:
+        # Load existing scenarios
+        with open(scenarios_file_path, 'r', encoding='utf-8') as f:
+            scenarios_list = json.load(f)
+
+        # Append the new scenario
+        scenarios_list.append(scenario.dict())
+
+        # Save the updated list back to the file
+        with open(scenarios_file_path, 'w', encoding='utf-8') as f:
+            json.dump(scenarios_list, f, indent=4)
+
+        # Reload scenarios into memory to make the new one available
+        reload_scenarios()
+
+        return {"message": f"Scenario '{scenario.title}' added successfully!"}
+
+    except Exception as e:
+        print(f"ERROR_BACKEND: Failed to add new scenario: {e}")
+        raise HTTPException(status_code=500, detail="Failed to add new scenario.")
 
 
 # Pydantic model for the chat request body
