@@ -54,12 +54,18 @@ def reload_scenarios():
 reload_scenarios()
 
 # Pydantic model for the new scenario data
+class ChatActor(BaseModel):
+    customerName: str
+    backstory: str
+    tone: str
+    goalQuestions: List[str]
+
 class NewScenario(BaseModel):
     id: str
     title: str
-    initialFacts: Dict[str, str]
-    chatActor: Dict[str, Any]
-    keyActors: Dict[str, str]
+    initialFacts: str
+    chatActor: ChatActor
+
 
 # Endpoint to add a new scenario
 @app.post("/add_scenario")
@@ -85,6 +91,18 @@ async def add_scenario(scenario: NewScenario):
     except Exception as e:
         print(f"ERROR_BACKEND: Failed to add new scenario: {e}")
         raise HTTPException(status_code=500, detail="Failed to add new scenario.")
+
+# Endpoint to export scenarios.json content. Open https://app-name/export_scenarios to download the file. 
+@app.get("/export_scenarios")
+async def export_scenarios():
+    """Returns the contents of scenarios.json for local use."""
+    try:
+        with open(scenarios_file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="scenarios.json not found on server.")
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=500, detail="Invalid JSON format in scenarios.json.")
 
 
 # Pydantic model for the chat request body

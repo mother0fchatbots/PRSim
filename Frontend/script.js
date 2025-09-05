@@ -364,10 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const newScenario = {
             id: `scenario-${Date.now()}`,
             title: formData.get('scenario-title'),
-            initialFacts: {
-                heading: "Initial Facts",
-                content: formData.get('initial-facts-content')
-            },
+            initialFacts: formData.get('initial-facts-content'),
             chatActor: {
                 customerName: formData.get('customer-name'),
                 backstory: formData.get('backstory'),
@@ -375,6 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 goalQuestions: formData.get('goal-questions').split(',').map(item => item.trim())
             }
         };
+
+        console.log("Data being sent to backend:", newScenario);
 
         try {
             // Send the new scenario data to the backend
