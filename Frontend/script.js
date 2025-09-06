@@ -13,9 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleDetailsBtn = document.getElementById('toggle-details-btn');
     const scenarioDetailsContent = document.getElementById('scenario-details-content');
 
-    // --- Task List Buttons ---
+    // --- Task List ---
     const startChatBtn = document.getElementById('start-chat-btn');
     const getFeedbackBtn = document.getElementById('get-feedback-btn');
+    const chatActorBackstory = document.getElementById('chat-actor-backstory');
 
     // --- Chat Elements ---
     const chatContainer = document.getElementById('chat-container');
@@ -155,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderScenarioDetails(scenario) {
         scenarioTitle.textContent = scenario.title;
         factsContent.innerHTML = scenario.initialFacts;
+        chatActorBackstory.innerHTML = `<strong>Customer Backstory:</strong> ${scenario.chatActor.backstory}`;
 
         // Reset and hide the chat and feedback sections when a new scenario is loaded
         resetChat();
