@@ -32,5 +32,21 @@
         "Long-Term Trust: How can we, or any other minority community, ever trust your publication again to accurately and respectfully tell our stories? What guarantees can you provide to ensure this will not happen again?"
       ]
     }
-  }
+  },
+      {
+        "id": "scenario-1757168936583",
+        "title": "A Modern Fall from Grace",
+        "initialFacts": "The Purity & Partners CEO, Richard Sterling, was not just a business leader; he was a public figure whose reputation was built on a foundation of faith and family values. This carefully crafted facade came crashing down on a Tuesday afternoon, not through a newspaper headline, but a viral TikTok video. The short, storytime video was recorded by a young barista at a trendy coffee shop, showing Sterling in a compromising and intimate moment with his new CMO, Dr. Evelyn Reed. The clip, raw and unpolished, was an immediate sensation, amplified by a generation of users quick to call out corporate hypocrisy. Within hours, the hashtags were trending, the brand's social media feeds were in chaos, and the carefully curated image of a faithful family man was shattered for millions to see. For a brand that preached integrity, the public betrayal was not just a scandal—it was a seismic shock to its very foundation.\n\nThe crisis wasn't just a corporate problem; it was a deeply personal one for the thousands who had invested their trust, and in some cases, their faith, in the brand. One such person was Danny Thompson, a 23-year-old graphic designer. Danny had been a true believer in the Purity & Partners mission, seeing it as a beacon of ethical business. He had looked up to Richard Sterling as a mentor and even used his story to inspire others in his religious community. The scandal felt like a personal betrayal to Danny, not just to his values but to his professional dreams, as he had hoped to one day work for the company.",
+        "chatActor": {
+            "customerName": "Danny Thompson",
+            "backstory": "Danny Thompson, 23, is a graphic designer and a deeply committed member of his religious community. He was a devout follower of the Purity & Partners brand, viewing CEO Richard Sterling as a personal hero and a role model for how one can succeed in business with integrity. His dream was to one day work for the company, and this scandal shatters not only his professional aspirations but also his belief in the man he once looked up to.",
+            "tone": "Disillusionment and naivety, desperation for answers",
+            "goalQuestions": [
+                "Is this true?",
+                "Did he actually do this?",
+                "We heard him speak so many times about the sanctity of marriage. Was that all just part of a marketing plan?",
+                "I used his story to inspire people in my community. What am I supposed to say to them now?"
+            ]
+        }
+    }
 ]
