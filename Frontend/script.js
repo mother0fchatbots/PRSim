@@ -7,9 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const scenarioSelect = document.getElementById('scenario-select');
     const scenarioTitle = document.getElementById('scenario-title');
     const factsContent = document.getElementById('facts-content');
-    const actorsContent = document.getElementById('actors-content');
-    const implicationsContent = document.getElementById('implications-content');
-    const justificationsContent = document.getElementById('justifications-content');
     const toggleDetailsBtn = document.getElementById('toggle-details-btn');
     const scenarioDetailsContent = document.getElementById('scenario-details-content');
 
@@ -17,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startChatBtn = document.getElementById('start-chat-btn');
     const getFeedbackBtn = document.getElementById('get-feedback-btn');
     const chatActorBackstory = document.getElementById('chat-actor-backstory');
+    const publishStatementBtn = document.getElementById('publish-statement-btn');
 
     // --- Chat Elements ---
     const chatContainer = document.getElementById('chat-container');
