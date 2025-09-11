@@ -1,7 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    // --- New Login Form Selectors ---
+    const loginSection = document.getElementById('login-section');
+    const loginForm = document.getElementById('login-form');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const loginErrorMessage = document.getElementById('login-error-message');
+
     // --- View Containers ---
     const mainView = document.getElementById('main-view');
     const scenarioPage = document.getElementById('scenario-page');
+    const navSidebar = document.getElementById('nav-sidebar');
 
     // --- Scenario Selection and Details ---
     const scenarioSelect = document.getElementById('scenario-select');
@@ -47,6 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentScenarioId = null;
     let conversationHistory = [];
 
+    // --- Hardcoded Credentials ---
+    const AUTH_USERNAME = 'guest';
+    const AUTH_PASSWORD = 'narrative123';
+    const AUTH_FLAG = 'isAuthenticated';
+
     // --- Utility Functions ---
     function generateSessionId() {
         return 'session-' + Date.now();
@@ -91,13 +105,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- View Management ---
+    function showLoginView() {
+        loginSection.style.display = 'block';
+        mainView.style.display = 'none';
+        scenarioPage.style.display = 'none';
+        chatContainer.style.display = 'none';
+        feedbackContainer.style.display = 'none';
+        addScenarioFormSection.style.display = 'none';
+        statementContainer.style.display = 'none';
+        startChatBtn.style.display = 'none';
+    }
+
     function showMainView() {
+        loginSection.style.display = 'none';
         mainView.style.display = 'block';
         scenarioPage.style.display = 'none';
         chatContainer.style.display = 'none';
         feedbackContainer.style.display = 'none';
         startChatBtn.style.display = 'block';
         getFeedbackBtn.style.display = 'none';
+        navSidebar.style.display = 'block';
     }
 
     function showScenarioPage() {
@@ -213,6 +240,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Event Listeners ---
+
+    // --- Login Form ---
+    loginForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const username = usernameInput.value;
+        const password = passwordInput.value;
+
+        if (username === AUTH_USERNAME && password === AUTH_PASSWORD) {
+            localStorage.setItem(AUTH_FLAG, 'true');
+            loginErrorMessage.classList.add('hidden');
+            loadScenarios();
+            showMainView();             
+        } else {
+            loginErrorMessage.textContent = 'Invalid username or password.';
+            loginErrorMessage.classList.remove('hidden');
+        }
+    });
 
     // --- Left-hand menu ---
     // Scenario selection
@@ -422,6 +466,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });    
 
     // Initial load
-    loadScenarios();
-    showMainView(); // Start on the welcome page
+    //loadScenarios();
+    //showMainView(); // Start on the welcome page
+
+    //  --- Authentication Logic ---
+    if (localStorage.getItem(AUTH_FLAG) === 'true') {
+        loadScenarios();
+        showMainView();
+    } else {
+        showLoginView();
+    }
 });

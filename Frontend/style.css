@@ -3,6 +3,73 @@
     display: none;
 }
 
+body {
+    display: flex;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: #f0f2f5;
+}
+
+.content-wrapper {
+    flex-grow: 1; /* This makes the wrapper take up all available space */
+    display: flex;
+    justify-content: center;   /* Center horizontally */
+    align-items: center;       /* Center vertically */
+    height: 100vh;    
+}
+
+/* --- LOGIN PAGE --- */
+/* --- Login Form Styling --- */
+
+.login-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;    
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f2f5;
+    z-index: 10;
+}
+
+.login-box {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+.login-box .section-title {
+    margin-bottom: 30px;
+}
+
+.login-btn {
+    width: 100%;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 1.1rem;
+    padding: 12px;
+}
+
+.login-btn:hover {
+    background-color: #0056b3;
+}
+
+.error-message {
+    color: #dc3545;
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
 /* --- LAYOUT --- */
 .main-content {
     padding: 20px;
@@ -39,12 +106,7 @@
 }
 
 /* SIDEBAR */
-body {
-    display: flex;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background-color: #f0f2f5;
-}
+
 .sidebar {
     width: 280px;
     background-color: #34495e;

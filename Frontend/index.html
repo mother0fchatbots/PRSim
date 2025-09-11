@@ -8,7 +8,7 @@
 </head>
 
 <body>
-     <nav class="sidebar">
+     <nav class="sidebar" id="nav-sidebar" style="display: none;">
         <h1 class="app-title">PR Crisis Simulator</h1>
         <div class="scenario-selector">
             <h3>Choose a Scenario:</h3>
@@ -22,130 +22,151 @@
         </ul>
     </nav>
 
-    <main class="main-content">
-        <div id="main-view">
-            <div>
-                <img src="/assets/Logo_Narrative.png" alt="Profile Picture" class="welcome-profile-pic">
-            </div>
-            <h1 class="welcome-heading">AI-powered, engaging narratives for your people</h1>
-            <p class="welcome-text">
-                Use the menu on the left to select a scenario and begin your simulation.<br>
-                Have a brand more resilient than your wifi signal.
-            </p>
+    <div class="content-wrapper">
+
+        <section id="login-section" class="login-container">
+        <div class="login-box">
+            <h2 class="section-title">Sign In</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="submit-btn login-btn">Log In</button>
+            </form>
+            <p id="login-error-message" class="error-message hidden"></p>
         </div>
+        </section>
 
-        <div id="scenario-page" style="display: none;">
-            <header class="scenario-page-header">
-                <h1 id="scenario-title">Scenario Title</h1>
-            </header>
-
-            <div class="scenario-details-container">
-                <div class="details-header">
-                    <h2>Scenario Details</h2>
-                    <button id="toggle-details-btn" class="toggle-btn">Hide Details</button>
+        <main class="main-content">
+            <div id="main-view">
+                <div>
+                    <img src="/assets/Logo_Narrative.png" alt="Profile Picture" class="welcome-profile-pic">
                 </div>
-                <div id="scenario-details-content" class="details-content">
-                    <div id="facts-content"></div>
-                    <div id="actors-content"></div>
-                    <div id="implications-content"></div>
-                    <div id="justifications-content"></div>
-                </div>
-            </div>
-            
-            <div class="task-list">
-                <h2>Tasks</h2>
-                <ol id="task-list-items">
-                    <li id="task-chat" class="task-item">
-                        <span>1. Simulate Chat with Customer</span>
-                        <button id="start-chat-btn" class="task-action-btn">Start Chat</button>
-                        <button id="get-feedback-btn" class="task-action-btn" style="display: none;">Get Feedback</button>
-                    </li>
-                    <p><div id="chat-actor-backstory"></div></p>
-                    <li id="task-list-items-2" class="task-item">
-                        <span>2. Publish statement on social media</span>
-                        <button id="publish-statement-btn" class="task-action-btn">Compose Statement</button>
-                    </ol>
+                <h1 class="welcome-heading">AI-powered, engaging narratives for your people</h1>
+                <p class="welcome-text">
+                    Use the menu on the left to select a scenario and begin your simulation.<br>
+                    Have a brand more resilient than your wifi signal.
+                </p>
             </div>
 
-            <div id="chat-container" class="chat-container" style="display: none;">
-                <div class="chat-header">
-                    <h3 id="chat-customer-name">Customer Name</h3>
-                    <button id="close-chat-btn" class="close-btn">&times;</button>
-                </div>
-                <div id="chat-body" class="chat-body">
+            <div id="scenario-page" style="display: none;">
+                <header class="scenario-page-header">
+                    <h1 id="scenario-title">Scenario Title</h1>
+                </header>
+
+                <div class="scenario-details-container">
+                    <div class="details-header">
+                        <h2>Scenario Details</h2>
+                        <button id="toggle-details-btn" class="toggle-btn">Hide Details</button>
                     </div>
-                <div class="chat-input-area">
-                    <input type="text" id="chat-input" placeholder="Type your message...">
-                    <button id="send-chat-btn">Send</button>
+                    <div id="scenario-details-content" class="details-content">
+                        <div id="facts-content"></div>
+                        <div id="actors-content"></div>
+                        <div id="implications-content"></div>
+                        <div id="justifications-content"></div>
+                    </div>
                 </div>
-            </div>
+                
+                <div class="task-list">
+                    <h2>Tasks</h2>
+                    <ol id="task-list-items">
+                        <li id="task-chat" class="task-item">
+                            <span>1. Simulate Chat with Customer</span>
+                            <button id="start-chat-btn" class="task-action-btn">Start Chat</button>
+                            <button id="get-feedback-btn" class="task-action-btn" style="display: none;">Get Feedback</button>
+                        </li>
+                        <p><div id="chat-actor-backstory"></div></p>
+                        <li id="task-list-items-2" class="task-item">
+                            <span>2. Publish statement on social media</span>
+                            <button id="publish-statement-btn" class="task-action-btn">Compose Statement</button>
+                        </ol>
+                </div>
 
-            <div id="feedback-container" class="feedback-container" style="display: none;">
-                <div class="feedback-header">
-                    <h2>AI Feedback & Evaluation</h2>
-                    <button id="close-feedback-btn" class="close-btn">&times;</button>
+                <div id="chat-container" class="chat-container" style="display: none;">
+                    <div class="chat-header">
+                        <h3 id="chat-customer-name">Customer Name</h3>
+                        <button id="close-chat-btn" class="close-btn">&times;</button>
+                    </div>
+                    <div id="chat-body" class="chat-body">
+                        </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="Type your message...">
+                        <button id="send-chat-btn">Send</button>
+                    </div>
                 </div>
-                <div id="feedback-content" class="feedback-content">
-                    <p>Feedback will appear here...</p>
-                </div>
-            </div>
 
-            <div id="statement-container" class="statement-container" style="display: none;">
-                <h2 class="section-title">Compose a Social Media Post</h2>
-                <div class="social-media-form-container">
-                        <form id="social-media-form">
-                            <div class="post-header">
-                                <img src="/assets/Logo_Narrative.png" alt="Profile Picture" class="profile-pic">
-                                <span class="profile-name">"The Narrative" PR Official</span>
-                            </div>
-                            <div class="form-group">
-                                <input type="text" id="post-title" name="post-title" placeholder="Headline / Title..." required>
-                            </div>
-                            <div class="form-group">
-                                <textarea id="post-content" name="post-content" rows="6" placeholder="What's going on?" required></textarea>
-                                <div class="char-counter">
-                                    <span id="char-count">0</span>/280
+                <div id="feedback-container" class="feedback-container" style="display: none;">
+                    <div class="feedback-header">
+                        <h2>AI Feedback & Evaluation</h2>
+                        <button id="close-feedback-btn" class="close-btn">&times;</button>
+                    </div>
+                    <div id="feedback-content" class="feedback-content">
+                        <p>Feedback will appear here...</p>
+                    </div>
+                </div>
+
+                <div id="statement-container" class="statement-container" style="display: none;">
+                    <h2 class="section-title">Compose a Social Media Post</h2>
+                    <div class="social-media-form-container">
+                            <form id="social-media-form">
+                                <div class="post-header">
+                                    <img src="/assets/Logo_Narrative.png" alt="Profile Picture" class="profile-pic">
+                                    <span class="profile-name">"The Narrative" PR Official</span>
                                 </div>
-                            </div>
-                            <button type="submit" class="submit-btn post-btn">Post</button>
-                        </form>
-                    </div>
+                                <div class="form-group">
+                                    <input type="text" id="post-title" name="post-title" placeholder="Headline / Title..." required>
+                                </div>
+                                <div class="form-group">
+                                    <textarea id="post-content" name="post-content" rows="6" placeholder="What's going on?" required></textarea>
+                                    <div class="char-counter">
+                                        <span id="char-count">0</span>/280
+                                    </div>
+                                </div>
+                                <button type="submit" class="submit-btn post-btn">Post</button>
+                            </form>
+                        </div>
+                </div>
+
             </div>
 
-        </div>
-
-        <div id="add-scenario-form-section" style="display: none;">
-                <h2 class="section-title">Add a New Scenario</h2>
-                <form id="scenario-form" class="scenario-form">
-                    <div class="form-group">
-                        <label for="scenario-title">Scenario Title</label>
-                        <input type="text" id="scenario-title" name="scenario-title" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="initial-facts-content">Initial Facts</label>
-                        <textarea id="initial-facts-content" name="initial-facts-content" rows="4" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="customer-name">Customer Name</label>
-                        <input type="text" id="customer-name" name="customer-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="backstory">Customer Backstory</label>
-                        <textarea id="backstory" name="backstory" rows="4" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="tone">Customer Tone</label>
-                        <input type="text" id="tone" name="tone" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="goal-questions">Goal Questions (separated by commas)</label>
-                        <input type="text" id="goal-questions" name="goal-questions" required>
-                    </div>
-                    <button type="submit" class="submit-btn">Add Scenario</button>
-                </form>
-            </div>
-        
-    </main>
+            <div id="add-scenario-form-section" style="display: none;">
+                    <h2 class="section-title">Add a New Scenario</h2>
+                    <form id="scenario-form" class="scenario-form">
+                        <div class="form-group">
+                            <label for="scenario-title">Scenario Title</label>
+                            <input type="text" id="scenario-title" name="scenario-title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="initial-facts-content">Initial Facts</label>
+                            <textarea id="initial-facts-content" name="initial-facts-content" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="customer-name">Customer Name</label>
+                            <input type="text" id="customer-name" name="customer-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="backstory">Customer Backstory</label>
+                            <textarea id="backstory" name="backstory" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="tone">Customer Tone</label>
+                            <input type="text" id="tone" name="tone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="goal-questions">Goal Questions (separated by commas)</label>
+                            <input type="text" id="goal-questions" name="goal-questions" required>
+                        </div>
+                        <button type="submit" class="submit-btn">Add Scenario</button>
+                    </form>
+                </div>
+            
+        </main>
+    </div>    
 
     <script src="/static/script.js"></script>
 </body>
