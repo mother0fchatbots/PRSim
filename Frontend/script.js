@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const getFeedbackBtn = document.getElementById('get-feedback-btn');
     const chatActorBackstory = document.getElementById('chat-actor-backstory');
     const publishStatementBtn = document.getElementById('publish-statement-btn');
+    const statementContainer = document.getElementById('statement-container');
 
     // --- Chat Elements ---
     const chatContainer = document.getElementById('chat-container');
@@ -125,6 +126,10 @@ document.addEventListener('DOMContentLoaded', () => {
         addScenarioFormSection.style.display = 'block';
         scenarioPage.style.display = 'none';
     }
+
+    function showComposeStatementForm() {
+        statementContainer.style.display = 'block';
+        publishStatementBtn.style.display = 'none';}
 
 
     // --- Main Logic ---
@@ -353,6 +358,17 @@ document.addEventListener('DOMContentLoaded', () => {
         feedbackContainer.style.display = 'none';
         showMainView(); // Go back to the main view after closing feedback
         scenarioSelect.value = ""; // Reset the dropdown
+    });
+
+    // Compose statement button
+    publishStatementBtn.addEventListener('click', () => {
+        const selectedScenario = allScenarios.find(s => s.id === currentScenarioId);
+        if (!selectedScenario) {
+            alert("Please select a scenario first.");
+            return;
+        }
+
+        showComposeStatementForm();
     });
 
     // Add new scenario form submission

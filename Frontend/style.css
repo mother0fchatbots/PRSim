@@ -30,6 +30,14 @@
     margin: 0 auto;
 }
 
+.welcome-profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
 /* SIDEBAR */
 body {
     display: flex;
@@ -337,7 +345,7 @@ body {
 
 /* FEEDBACK CONTAINER */
 
-.feedback-container {
+.feedback-container, .statement-container {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -441,5 +449,96 @@ body {
 .submit-btn:active {
     background-color: #004085;
     transform: translateY(0); /* Press down effect */
+}
+
+/* --- SOCIAL MEDIA POST FORM Styling --- */
+
+.statement-container {
+    background-color: rgb(152, 174, 197);
+}
+
+.social-media-form-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+#social-media-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-pic {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+.profile-name {
+    font-weight: 600;
+    color: #333;
+}
+
+#post-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    border: none;
+    background: transparent;
+    padding: 10px 0;
+}
+
+#post-title::placeholder {
+    color: #aaa;
+    font-weight: normal;
+}
+
+#post-content {
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    resize: none;
+    padding: 10px 0;
+}
+
+#post-content:focus {
+    outline: none;
+}
+
+#post-content::placeholder {
+    color: #888;
+}
+
+.char-counter {
+    text-align: right;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.post-btn {
+    background-color: #1a73e8; /* A nice blue color */
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 999px; /* For a rounded button */
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    align-self: flex-end; /* Pushes the button to the right */
+    transition: background-color 0.3s ease;
+}
+
+.post-btn:hover {
+    background-color: #1764cf;
 }
 
