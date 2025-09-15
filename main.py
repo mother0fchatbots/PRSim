@@ -14,6 +14,9 @@ import gemini_chat_service # The chat logic, including GeminiChatSession
 # Define the path to your frontend directory (adjust "Frontend" if your folder is "frontend")
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "Frontend")
 
+# The folder for images, logos, etc
+ASSETS_DIR = os.path.join(FRONTEND_DIR, "assets")
+
 app = FastAPI()
 
 #configure CORS middleware
@@ -27,6 +30,8 @@ app.add_middleware(
 
 # Mount the static files directory
 app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
+# Mount the assets directory for images and other assets
+app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
 
 # In-memory store for chat sessions
 chat_sessions: Dict[str, gemini_chat_service.GeminiChatSession] = {}
