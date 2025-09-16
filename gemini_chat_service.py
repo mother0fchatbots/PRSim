@@ -23,7 +23,7 @@ else:
         # Consider making GOOGLE_API_KEY = None if config fails to prevent subsequent API calls
 
 # Initialize the Gemini model
-gemini_model = genai.GenerativeModel('gemini-1.5-flash')
+gemini_model = genai.GenerativeModel('gemini-2.5-flash')
 
 # --- Removed the top-level get_gemini_response function as it's now handled by the class ---
 # Also removed MockGeminiAPI as you're using real Gemini API calls.

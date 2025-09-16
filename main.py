@@ -224,3 +224,10 @@ async def feedback_endpoint(request: FeedbackRequest):
     except Exception as e:
         print(f"ERROR_BACKEND: Failed to get feedback from model: {e}")
         raise HTTPException(status_code=500, detail="Failed to get feedback from the AI model.")
+    
+# New Pydantic model for the social media post analysis request
+class AnalyzePostRequest(BaseModel):
+    post_title: str
+    post_content: str
+    scenario_id: str
+
