@@ -261,6 +261,47 @@ async def get_feedback_from_model(history: list, scenario_details: dict) -> str:
         print(f"Error calling Gemini API for feedback: {e}")
         return "An error occurred while communicating with the AI model."
 
+async def analyze_post_sentiment(self, post_title, post_content, scenario_details):
+    """
+    Semtiment analysis for a social media post
+    
+    """
+    initial_facts = scenario_details['initialFacts']
+    scenario_title = scenario_details['title']
+
+     # Construct a detailed prompt for the Gemini model
+    prompt = f"""
+        **Context:** You are a social media sentiment analysis expert. Your task is to analyze a social media post and predict the sentiment of the audience.
+        
+        **Scenario Details:**
+        - **Crisis:** {scenario_title}
+        - **Initial Facts:** {initial_facts}
+        - **Target Audience:** The general public, brand followers, and media.
+
+        **Social Media Post to Analyze:**
+        **Title:** {post_title}
+        **Content:** {post_content}
+
+        **Your Task:**
+        Based on the provided context and the social media post content, provide a concise sentiment analysis. Specifically, answer the following questions:
+        1.  **Overall Sentiment:** What is the overall sentiment of the post's content?
+        2.  **Predicted Audience Reaction:** Given the crisis context, what sentiment or reaction will the target audience likely have after reading this post?
+        3.  **Suggestions:** Briefly suggest a single, specific improvement to the post to achieve a more positive or neutral reaction.
+        
+        Format your response as a simple, easy-to-read summary. Do not include any preambles or conversational text.
+        """
+    
+    try:
+        response = await gemini_model.generate_content_async(prompt)
+        if hasattr(response, 'text'):
+            return response.text
+        else:
+            print(f"Error: Gemini API response did not contain a text attribute.")
+            return "Failed to get a valid response from the AI model."
+    except Exception as e:
+        print(f"Error calling Gemini API for feedback: {e}")
+        return "An error occurred while communicating with the AI model."
+
 
 # --- This part is for direct testing of the service. It won't be run by FastAPI ---
 if __name__ == "__main__":

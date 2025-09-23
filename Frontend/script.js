@@ -133,6 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chatContainer.style.display = 'none';
         feedbackContainer.style.display = 'none';
         addScenarioFormSection.style.display = 'none';
+        scenarioDetailsContent.style.display = 'block'
     }
 
     function showChat() {
@@ -184,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderScenarioDetails(scenario) {
+        scenarioDetailsContent.style.display = 'block';
         scenarioTitle.textContent = scenario.title;
         factsContent.innerHTML = scenario.initialFacts;
         chatActorBackstory.innerHTML = `<strong>Customer Backstory:</strong> ${scenario.chatActor.backstory}`;

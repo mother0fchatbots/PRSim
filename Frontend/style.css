@@ -14,10 +14,6 @@ body {
 
 .content-wrapper {
     flex-grow: 1; /* This makes the wrapper take up all available space */
-    display: flex;
-    justify-content: center;   /* Center horizontally */
-    align-items: center;       /* Center vertically */
-    height: 100vh;    
 }
 
 /* --- LOGIN PAGE --- */
@@ -76,6 +72,8 @@ body {
     background-color: #f0f2f5;
     flex-grow: 1; /* Allows the main content to fill available space */
     position: relative; /* For proper positioning of children */
+    overflow-y: auto;
+    display: block;
 }
 
 /* WELCOME VIEW */

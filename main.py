@@ -231,3 +231,27 @@ class AnalyzePostRequest(BaseModel):
     post_content: str
     scenario_id: str
 
+# Sentiment analysis endpoint
+async def analyze_post(request_body: AnalyzePostRequest):
+    """
+    Analyzes a user's social media post for sentiment based on a specific scenario.
+    """
+    try:
+        # Load the scenarios and find the correct one
+        scenarios = reload_scenarios()
+        scenario = next((s for s in scenarios if s['id'] == request_body.scenario_id), None)
+        if not scenario:
+            raise HTTPException(status_code=404, detail="Scenario not found")
+
+        # Use the new service class to get the analysis
+        analysis_result = await gemini_chat_service.analyze_post_sentiment(
+            post_title=request_body.post_title,
+            post_content=request_body.post_content,
+            scenario_details=scenario
+        )
+
+        return {"analysis": analysis_result}
+
+    except Exception as e:
+        print(f"Error in sentiment analysis: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
