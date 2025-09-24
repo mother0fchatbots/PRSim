@@ -232,14 +232,13 @@ class AnalyzePostRequest(BaseModel):
     scenario_id: str
 
 # Sentiment analysis endpoint
+@app.post("/analyze_post")
 async def analyze_post(request_body: AnalyzePostRequest):
     """
     Analyzes a user's social media post for sentiment based on a specific scenario.
     """
     try:
-        # Load the scenarios and find the correct one
-        scenarios = reload_scenarios()
-        scenario = next((s for s in scenarios if s['id'] == request_body.scenario_id), None)
+        scenario = scenarios_data.get(request_body.scenario_id)
         if not scenario:
             raise HTTPException(status_code=404, detail="Scenario not found")
 

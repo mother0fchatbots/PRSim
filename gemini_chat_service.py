@@ -261,7 +261,7 @@ async def get_feedback_from_model(history: list, scenario_details: dict) -> str:
         print(f"Error calling Gemini API for feedback: {e}")
         return "An error occurred while communicating with the AI model."
 
-async def analyze_post_sentiment(self, post_title, post_content, scenario_details):
+async def analyze_post_sentiment(post_title, post_content, scenario_details):
     """
     Semtiment analysis for a social media post
     

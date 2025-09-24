@@ -519,7 +519,7 @@ body {
 
 .social-media-form-container {
     padding: 20px;
-    background-color: #f8f9fa;
+    background-color: #f0f2f5;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
@@ -554,7 +554,7 @@ body {
     font-weight: bold;
     color: #333;
     border: none;
-    background: transparent;
+    background-color: white;
     padding: 10px 0;
 }
 
@@ -569,6 +569,7 @@ body {
     font-size: 1rem;
     resize: none;
     padding: 10px 0;
+    background-color: white
 }
 
 #post-content:focus {
@@ -586,7 +587,7 @@ body {
 }
 
 .post-btn {
-    background-color: #1a73e8; /* A nice blue color */
+    background-color: #293e5a; /* A nice blue color */
     color: #fff;
     border: none;
     padding: 12px 20px;
@@ -601,4 +602,26 @@ body {
 .post-btn:hover {
     background-color: #1764cf;
 }
+
+/* --- SENTIMENT ANALYSIS container Styling --- */
+.sentiment-container {
+    background-color: #f0f2f5;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.feedback-title {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.feedback-body {
+    white-space: pre-wrap; /* Preserves whitespace and line breaks from the model's response */
+    color: #555;
+    line-height: 1.6;
+}
+
 

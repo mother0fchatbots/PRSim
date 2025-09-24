@@ -39,6 +39,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedbackContent = document.getElementById('feedback-content');
     const closeFeedbackBtn = document.getElementById('close-feedback-btn');
 
+    // --- Social media statement elements ---
+    const socialMediaForm = document.getElementById('social-media-form');
+    const socialMediaPostTitle = document.getElementById('post-title');
+    const socialMediaPostContent = document.getElementById('post-content');
+    const postBtn = document.getElementById('post-btn');
+    const sentimentAnalysisContainer = document.getElementById('sentiment-analysis-container');
+    const sentimentAnalysisBody = document.getElementById('sentiment-analysis-body');
+
     // New element selectors for the "Add Scenario" feature
     const viewScenariosLink = document.getElementById('view-scenarios-link');
     const addScenarioLink = document.getElementById('add-scenario-link');
@@ -415,6 +423,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         showComposeStatementForm();
+    });
+
+    // Social media post submission
+    socialMediaForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const postTitle = socialMediaPostTitle.value;
+        const postContent = socialMediaPostContent.value;
+
+        if (!postTitle.trim() || !postContent.trim()) {
+            alert("Please fill out both the title and content fields.");
+            return;
+        }
+
+        // Hide previous results and show loading message
+        sentimentAnalysisContainer.style.display = 'block';
+        sentimentAnalysisBody.innerHTML = '<div class="loading-message">Preparing sentiment analysis...</div>';
+
+        try {
+            const response = await fetch(`${backendUrl}/analyze_post`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    post_title: postTitle,
+                    post_content: postContent,
+                    scenario_id: currentScenarioId 
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`HTTP error! Status: ${response.status} - ${errorData.detail || response.statusText}`);
+            }
+
+            const data = await response.json();
+            sentimentAnalysisBody.textContent = data.analysis;
+
+        } catch (error) {
+            console.error('Error getting sentiment analysis:', error);
+            sentimentAnalysisBody.textContent = `Sorry, an error occurred: ${error.message}`;
+        }
     });
 
     // Add new scenario form submission
